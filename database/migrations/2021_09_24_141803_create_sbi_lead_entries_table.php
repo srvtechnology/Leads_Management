@@ -18,7 +18,9 @@ class CreateSbiLeadEntriesTable extends Migration
             $table->string('sarrogate')->nullable();
             $table->string('mobile')->max(10)->nullable();
             $table->string('pan')->nullable();
-            $table->string('name')->nullable();
+            $table->string('salutation')->nullable();
+            $table->string('fname')->nullable();
+            $table->string('lname')->nullable();
             $table->string('dob')->nullable();
             $table->string('education')->nullable();
             $table->string('father_name')->nullable();
@@ -58,6 +60,7 @@ class CreateSbiLeadEntriesTable extends Migration
             $table->string('application_no')->nullable();
             $table->string('lead_ref')->nullable();
             $table->string('bank_remark')->nullable();
+            $table->string('card_limit')->nullable();
             $table->boolean('app_code_status')->default(0)->nullable();
             $table->timestamps();
         });

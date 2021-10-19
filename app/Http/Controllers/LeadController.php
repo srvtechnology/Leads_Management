@@ -196,22 +196,22 @@ class LeadController extends Controller
                     return response()->json(['msg' => "Something Went Wrong"]);
                 } else {
                     $data = SbiLeadEntry::create([
-                        'pan' => $r->checkPan, 'name' => $r->checkName,
-                        'bm_id' => $qry->bm, 'status' => 7
+                        'pan' => $r->checkPan, 'fname' => $r->checkName,
+                        'bm_id' => $qry->bm, 'status' => 1
                     ]);
                     return response()->json(['msg' => "Plase wait for verification!"]);
                 }
             } else {
                 $data = SbiLeadEntry::create([
-                    'pan' => $r->checkPan, 'name' => $r->checkName,
-                    'tl_id' => $qry[0]->tl, 'bm_id' => $qry[0]->bm, 'status' => 7
+                    'pan' => $r->checkPan, 'fname' => $r->checkName,
+                    'tl_id' => $qry[0]->tl, 'bm_id' => $qry[0]->bm, 'status' => 1
                 ]);
                 return response()->json(['msg' => "Plase wait for verification!"]);
             }
             return response()->json(['msg' => "tc mot found"]);
         } else {
             $data = SbiLeadEntry::create([
-                'pan' => $r->checkPan, 'name' => $r->checkName,
+                'pan' => $r->checkPan, 'fname' => $r->checkName,
                 'tc_id' => $qry->tc, 'tl_id' => $qry->tl, 'bm_id' => $qry->bm, 'status' => 7
             ]);
             return response()->json(['msg' => "Plase wait for verification!"]);
@@ -257,34 +257,37 @@ class LeadController extends Controller
     {
         // return response()->json(['msg'=>$r->name]);
         $validator = Validator::make($r->all(), [
-            'email' => 'required|email',
-            'name' => 'required|string|max:50',
-            'sarrogate' => 'required',
-            'mobile' => 'required',
-            'pan' => 'required',
+
+            'salutation' => 'required|string',
+            'fname' => 'required',
+            // 'lname' => 'required',
             'dob' => 'required',
-            'education' => 'required',
+            'pan' => 'required',
             'father_name' => 'required',
             'mother_name' => 'required',
-            'marital_status' => 'required',
             'resi_address' => 'required',
             'resi_city' => 'required',
-            'resi_pin' => 'required',
+            'resi_pin' => 'required|integer',
             'curr_adrs_proof' => 'required',
-            'resi_phone' => 'required',
-            'sbi_ac' => 'required',
+            // 'resi_phone' => 'required|integer',
+            'mobile' => 'required|integer',
+            'email' => 'required|email',
             'occupation' => 'required',
-            'designation' => 'required',
             'company' => 'required',
-            'office_address' => 'required',
-            'office_city' => 'required',
-            'office_pin' => 'required',
-            'office_phone' => 'required',
-            'aadhaar_linked_mobile' => 'required',
-            'appointment_date' => 'required',
-            'appointment_time' => 'required',
-            'card_applied' => 'required',
-            'appointment_adrs' => 'required',
+            'designation' => 'required',
+            'sarrogate' => 'required',
+            // 'education' => 'required',
+            // 'marital_status' => 'required',
+            // 'sbi_ac' => 'required',
+            // 'office_address' => 'required',
+            // 'office_city' => 'required',
+            // 'office_pin' => 'required|number',
+            // 'office_phone' => 'required|number',
+            // 'aadhaar_linked_mobile' => 'required',
+            // 'appointment_date' => 'required',
+            // 'appointment_time' => 'required',
+            // 'card_applied' => 'required',
+            // 'appointment_adrs' => 'required',
 
         ]);
 
@@ -292,36 +295,30 @@ class LeadController extends Controller
             //  Session::flash('msg', $validator->messages()->first());
             return response()->json(['msg' => $validator->messages()->first(), 'flag' => 0]);
         }
-        // if ($r->tlstatus == 'CPV') {
-        //     $check = SbiLeadEntry::where('id', $r->lead_id)->where('pan', $r->pan)->first();
-        //     if ($check->bank_document == null) {
-        //         return response()->json(['msg' => "Bank Statement Not Uploaded", 'flag' => 0]);
-        //     }
-        // }
-        if ($r->tlstatus == 'Approve') {
-            SbiLeadEntry::where('id', $r->lead_id)->where('pan', $r->pan)->update(['status' => 1]);
-        }
+        
         try {
             SbiLeadEntry::where('id', $r->lead_id)->where('pan', $r->pan)->update([
-                'sarrogate' => $r->sarrogate,
-                'mobile' => $r->mobile,
-                'pan' => $r->pan,
-                'name' => $r->name,
+                'salutation'=> $r->salutation,
+                'fname' => $r->fname,
+                'lname' => $r->lname,
                 'dob' => $r->dob,
-                'education' => $r->education,
+                'pan' => $r->pan,
                 'father_name' => $r->father_name,
                 'mother_name' => $r->mother_name,
-                'marital_status' => $r->marital_status,
                 'resi_address' => $r->resi_address,
                 'resi_city' => $r->resi_city,
                 'resi_pin' => $r->resi_pin,
                 'curr_adrs_proof' => $r->curr_adrs_proof,
                 'resi_phone' => $r->resi_phone,
-                'sbi_ac' => $r->sbi_ac,
+                'mobile' => $r->mobile,
                 'email' => $r->email,
                 'occupation' => $r->occupation,
-                'designation' => $r->designation,
                 'company' => $r->company,
+                'designation' => $r->designation,
+                'sarrogate' => $r->sarrogate,
+                'education' => $r->education,
+                'marital_status' => $r->marital_status,
+                'sbi_ac' => $r->sbi_ac,
                 'office_address' => $r->office_address,
                 'office_city' => $r->office_city,
                 'office_pin' => $r->office_pin,
@@ -336,8 +333,14 @@ class LeadController extends Controller
                 'application_no' => $r->application_no,
                 'lead_ref'=>$r->lead_ref,
                 'bank_remark'=>$r->bank_remark,
+                'card_limit'=>$r->card_limit,
                 'tl_status' => $r->tlstatus,
             ]);
+            $urs = User::where('id',$r->id)->first();
+
+            if ($urs->role == 2 && $r->tlstatus == 'Approve') {
+                SbiLeadEntry::where('id', $r->lead_id)->where('pan', $r->pan)->update(['status' => 1]);
+            }
             return response()->json(['msg' => "Updated Succesfully:)", 'flag' => 1]);
         } catch (Exception $e) {
             return response()->json(['msg' => $e->getMessage(), 'flag' => 0]);
@@ -348,16 +351,16 @@ class LeadController extends Controller
     {
         $user = User::where('user_id', $r->id)->first();
         if ($user->role == 1) {
-            $alltc = SbiLeadEntry::select(DB::raw('id as ID, name as NAME, pan as PAN,tc_id as TC, tl_id as TL, bm_id as BM, pan_check as STATUS '))
+            $alltc = SbiLeadEntry::select(DB::raw('id as ID,salutation as Salutation, fname as FIRST_NAME,lname as LAST_NAME, pan as PAN,tc_id as TC, tl_id as TL, bm_id as BM, pan_check as STATUS '))
                 ->where('bm_id', $r->id)->get();
         } elseif ($user->role == 2) {
-            $alltc = SbiLeadEntry::select(DB::raw('id as ID, name as NAME, pan as PAN,tc_id as TC, tl_id as TL, bm_id as BM, pan_check as STATUS '))
+            $alltc = SbiLeadEntry::select(DB::raw('id as ID,salutation as Salutation, fname as FIRST_NAME,lname as LAST_NAME, pan as PAN,tc_id as TC, tl_id as TL, bm_id as BM, pan_check as STATUS '))
                 ->where('tl_id', $r->id)->get();
         } elseif ($user->role == 3) {
-            $alltc = SbiLeadEntry::select(DB::raw('id as ID, name as NAME, pan as PAN,tc_id as TC, tl_id as TL, bm_id as BM, pan_check as STATUS '))
+            $alltc = SbiLeadEntry::select(DB::raw('id as ID,salutation as Salutation, fname as FIRST_NAME,lname as LAST_NAME, pan as PAN,tc_id as TC, tl_id as TL, bm_id as BM, pan_check as STATUS '))
                 ->where('tc_id', $r->id)->get();
         } elseif ($user->role == 4) {
-            $alltc = SbiLeadEntry::select(DB::raw('id as ID, name as NAME, pan as PAN,tc_id as TC, tl_id as TL, bm_id as BM, pan_check as STATUS '))
+            $alltc = SbiLeadEntry::select(DB::raw('id as ID,salutation as Salutation, fname as FIRST_NAME,lname as LAST_NAME, pan as PAN,tc_id as TC, tl_id as TL, bm_id as BM, pan_check as STATUS '))
                 ->get();
         }
         $i = 0;
@@ -379,27 +382,40 @@ class LeadController extends Controller
     }
     public function showSbiSummary(Request $r)
     {
-        $user = User::where('user_id', $r->id)->first();
-        if ($user->role == 1) {
-            $alltc = SbiLeadEntry::select(DB::raw('sbi_lead_entries.id,sbi_lead_entries.sarrogate,sbi_lead_entries.mobile,sbi_lead_entries.pan,sbi_lead_entries.name,sbi_lead_entries.dob,sbi_lead_entries.education,sbi_lead_entries.father_name,sbi_lead_entries.mother_name,sbi_lead_entries.marital_status,sbi_lead_entries.resi_address,sbi_lead_entries.resi_city,sbi_lead_entries.resi_pin,sbi_lead_entries.curr_adrs_proof,sbi_lead_entries.resi_phone,sbi_lead_entries.sbi_ac,sbi_lead_entries.email,sbi_lead_entries.occupation,sbi_lead_entries.designation,sbi_lead_entries.company,sbi_lead_entries.office_address,sbi_lead_entries.office_city,sbi_lead_entries.office_pin,sbi_lead_entries.office_phone,sbi_lead_entries.aadhaar_linked_mobile,sbi_lead_entries.appointment_date,sbi_lead_entries.appointment_time,sbi_lead_entries.card_applied,sbi_lead_entries.appointment_adrs, statuses.status as STATUS'))
-            ->join('statuses', 'statuses.id', '=', 'sbi_lead_entries.status')
-            ->where('bm_id', $r->id)->where('pan_check', 1)->where('tl_status', "!=", null)->get();
-        } elseif ($user->role == 2) {
-            $alltc = SbiLeadEntry::select(DB::raw('sbi_lead_entries.id,sbi_lead_entries.sarrogate,sbi_lead_entries.mobile,sbi_lead_entries.pan,sbi_lead_entries.name,sbi_lead_entries.dob,sbi_lead_entries.education,sbi_lead_entries.father_name,sbi_lead_entries.mother_name,sbi_lead_entries.marital_status,sbi_lead_entries.resi_address,sbi_lead_entries.resi_city,sbi_lead_entries.resi_pin,sbi_lead_entries.curr_adrs_proof,sbi_lead_entries.resi_phone,sbi_lead_entries.sbi_ac,sbi_lead_entries.email,sbi_lead_entries.occupation,sbi_lead_entries.designation,sbi_lead_entries.company,sbi_lead_entries.office_address,sbi_lead_entries.office_city,sbi_lead_entries.office_pin,sbi_lead_entries.office_phone,sbi_lead_entries.aadhaar_linked_mobile,sbi_lead_entries.appointment_date,sbi_lead_entries.appointment_time,sbi_lead_entries.card_applied,sbi_lead_entries.appointment_adrs, statuses.status as STATUS'))
-            ->join('statuses', 'statuses.id', '=', 'sbi_lead_entries.status')
-            ->where('tl_id', $r->id)->where('pan_check', 1)->where('tl_status', "!=", null)->get();
-        } elseif ($user->role == 3) {
-            $alltc = SbiLeadEntry::select(DB::raw('sbi_lead_entries.id,sbi_lead_entries.sarrogate,sbi_lead_entries.mobile,sbi_lead_entries.pan,sbi_lead_entries.name,sbi_lead_entries.dob,sbi_lead_entries.education,sbi_lead_entries.father_name,sbi_lead_entries.mother_name,sbi_lead_entries.marital_status,sbi_lead_entries.resi_address,sbi_lead_entries.resi_city,sbi_lead_entries.resi_pin,sbi_lead_entries.curr_adrs_proof,sbi_lead_entries.resi_phone,sbi_lead_entries.sbi_ac,sbi_lead_entries.email,sbi_lead_entries.occupation,sbi_lead_entries.designation,sbi_lead_entries.company,sbi_lead_entries.office_address,sbi_lead_entries.office_city,sbi_lead_entries.office_pin,sbi_lead_entries.office_phone,sbi_lead_entries.aadhaar_linked_mobile,sbi_lead_entries.appointment_date,sbi_lead_entries.appointment_time,sbi_lead_entries.card_applied,sbi_lead_entries.appointment_adrs, statuses.status as STATUS'))
-            ->join('statuses', 'statuses.id', '=', 'sbi_lead_entries.status')
-            ->where('tc_id', $r->id)->where('pan_check', 1)->where('tl_status', "!=", null)->get();
-        } elseif ($user->role == 4) {
-            $alltc = SbiLeadEntry::select(DB::raw('sbi_lead_entries.id,sbi_lead_entries.sarrogate,sbi_lead_entries.mobile,sbi_lead_entries.pan,sbi_lead_entries.name,sbi_lead_entries.dob,sbi_lead_entries.education,sbi_lead_entries.father_name,sbi_lead_entries.mother_name,sbi_lead_entries.marital_status,sbi_lead_entries.resi_address,sbi_lead_entries.resi_city,sbi_lead_entries.resi_pin,sbi_lead_entries.curr_adrs_proof,sbi_lead_entries.resi_phone,sbi_lead_entries.sbi_ac,sbi_lead_entries.email,sbi_lead_entries.occupation,sbi_lead_entries.designation,sbi_lead_entries.company,sbi_lead_entries.office_address,sbi_lead_entries.office_city,sbi_lead_entries.office_pin,sbi_lead_entries.office_phone,sbi_lead_entries.aadhaar_linked_mobile,sbi_lead_entries.appointment_date,sbi_lead_entries.appointment_time,sbi_lead_entries.card_applied,sbi_lead_entries.appointment_adrs, statuses.status as STATUS'))
-            ->join('statuses', 'statuses.id', '=', 'sbi_lead_entries.status')
-            ->where('pan_check', 1)->where('tl_status', "!=", null)->get();
+        $usr = User::where('user_id',$r->id)->first();
+        if($usr->role ==1){
+            $alltc =User::select(DB::raw('user_id AS TC,teams.tl as TL,teams.bm as BM'))
+        ->join('teams','users.user_id', '=', 'teams.tc')->join('roles','users.role', '=', 'roles.id')
+        ->where('users.role',3)->where('users.delete',0)->where('teams.bm',$r->id)->get();
+        }elseif($usr->role ==2){
+            $alltc =User::select(DB::raw('user_id AS TC,teams.tl as TL,teams.bm as BM'))
+        ->join('teams','users.user_id', '=', 'teams.tc')->join('roles','users.role', '=', 'roles.id')
+        ->where('users.role',3)->where('users.delete',0)->where('teams.tl',$r->id)->get();
         }
-        
-        $i = 0;
-        if ($alltc) {
+        $i=0;
+        foreach($alltc as $row){
+            $qd=SbiLeadEntry::where('tc_id',$row->TC)->where('status',1)->get();
+            $acp=SbiLeadEntry::where('tc_id',$row->TC)->where('status',2)->get();
+            $acr=SbiLeadEntry::where('tc_id',$row->TC)->where('status',3)->get();
+            $nc=SbiLeadEntry::where('tc_id',$row->TC)->where('status',4)->get();
+            $dec=SbiLeadEntry::where('tc_id',$row->TC)->where('status',5)->get();
+            $apr=SbiLeadEntry::where('tc_id',$row->TC)->where('status',6)->get();
+            $pfv=SbiLeadEntry::where('tc_id',$row->TC)->where('status',7)->get();
+            $cb=SbiLeadEntry::where('tc_id',$row->TC)->where('status',8)->get();
+            $alltc[$i]->QD= count($qd);
+            $alltc[$i]->App_code_pending= count($acp);
+            $alltc[$i]->App_code_received= count($acr);
+            $alltc[$i]->Need_correction= count($nc);
+            $alltc[$i]->Decline= count($dec);
+            $alltc[$i]->Approve= count($apr);
+            $alltc[$i]->Verification_pending= count($pfv);
+            $alltc[$i]->Card_booked= count($cb);
+
+            
+            $i++;
+        }
+        // dd($alltc);
+        if($alltc) {
             return response()->json($alltc);
         }
 
@@ -409,29 +425,29 @@ class LeadController extends Controller
     {
         $user = User::where('user_id', $r->id)->first();
         if ($user->role == 1) {
-            $alltc = SbiLeadEntry::select(DB::raw('sbi_lead_entries.id as ID, sbi_lead_entries.name as NAME, sbi_lead_entries.pan as PAN,
+            $alltc = SbiLeadEntry::select(DB::raw('sbi_lead_entries.id as ID, sbi_lead_entries.salutation as Salutation, sbi_lead_entries.fname as FIRST_NAME,sbi_lead_entries.lname as LAST_NAME, sbi_lead_entries.pan as PAN,
         sbi_lead_entries.tc_id as TC, sbi_lead_entries.tl_id as TL, sbi_lead_entries.bm_id as BM, sbi_lead_entries.application_no as APPLICATION_NO,sbi_lead_entries.lead_ref as LEAD_REFERENCE, 
         sbi_lead_entries.tl_status as TL_STATUS,sbi_lead_entries.bank_remark as BANK_REMARK, statuses.status as STATUS, sbi_lead_entries.comment as REMARK'))
                 ->join('statuses', 'statuses.id', '=', 'sbi_lead_entries.status')
-                ->where('bm_id', $r->id)->where('pan_check', 1)->get();
+                ->where('bm_id', $r->id)->where('pan_check', 1)->where('sbi_lead_entries.status','!=', 7)->get();
         } elseif ($user->role == 2) {
-            $alltc = SbiLeadEntry::select(DB::raw('sbi_lead_entries.id as ID, sbi_lead_entries.name as NAME, sbi_lead_entries.pan as PAN,
+            $alltc = SbiLeadEntry::select(DB::raw('sbi_lead_entries.id as ID, sbi_lead_entries.salutation as Salutation, sbi_lead_entries.fname as FIRST_NAME,sbi_lead_entries.lname as LAST_NAME, sbi_lead_entries.pan as PAN,
         sbi_lead_entries.tc_id as TC, sbi_lead_entries.tl_id as TL, sbi_lead_entries.bm_id as BM, sbi_lead_entries.application_no as APPLICATION_NO, sbi_lead_entries.lead_ref as LEAD_REFERENCE, 
         sbi_lead_entries.tl_status as TL_STATUS,sbi_lead_entries.bank_remark as BANK_REMARK, statuses.status as STATUS, sbi_lead_entries.comment as REMARK'))
                 ->join('statuses', 'statuses.id', '=', 'sbi_lead_entries.status')
                 ->where('tl_id', $r->id)->where('pan_check', 1)->get();
         } elseif ($user->role == 3) {
-            $alltc = SbiLeadEntry::select(DB::raw('sbi_lead_entries.id as ID, sbi_lead_entries.name as NAME, sbi_lead_entries.pan as PAN,
+            $alltc = SbiLeadEntry::select(DB::raw('sbi_lead_entries.id as ID, sbi_lead_entries.salutation as Salutation, sbi_lead_entries.fname as FIRST_NAME,sbi_lead_entries.lname as LAST_NAME, sbi_lead_entries.pan as PAN,
         sbi_lead_entries.tc_id as TC, sbi_lead_entries.tl_id as TL, sbi_lead_entries.bm_id as BM, sbi_lead_entries.application_no as APPLICATION_NO,sbi_lead_entries.lead_ref as LEAD_REFERENCE, 
         sbi_lead_entries.tl_status as TL_STATUS,sbi_lead_entries.bank_remark as BANK_REMARK, statuses.status as STATUS, sbi_lead_entries.comment as REMARK'))
                 ->join('statuses', 'statuses.id', '=', 'sbi_lead_entries.status')
                 ->where('tc_id', $r->id)->where('pan_check', 1)->get();
         } elseif ($user->role == 4) {
-            $alltc = SbiLeadEntry::select(DB::raw('sbi_lead_entries.id as ID, sbi_lead_entries.name as NAME, sbi_lead_entries.pan as PAN,
+            $alltc = SbiLeadEntry::select(DB::raw('sbi_lead_entries.id as ID, sbi_lead_entries.salutation as Salutation, sbi_lead_entries.fname as FIRST_NAME,sbi_lead_entries.lname as LAST_NAME, sbi_lead_entries.pan as PAN,
         sbi_lead_entries.tc_id as TC, sbi_lead_entries.tl_id as TL, sbi_lead_entries.bm_id as BM, sbi_lead_entries.application_no as APPLICATION_NO, sbi_lead_entries.lead_ref as LEAD_REFERENCE, 
         sbi_lead_entries.tl_status as TL_STATUS,sbi_lead_entries.bank_remark as BANK_REMARK, statuses.status as STATUS, sbi_lead_entries.comment as REMARK'))
                 ->join('statuses', 'statuses.id', '=', 'sbi_lead_entries.status')
-                ->where('pan_check', 1)->get();
+                ->where('pan_check', 1)->where('sbi_lead_entries.status','!=', 7)->get();
         }
 
         $i = 0;

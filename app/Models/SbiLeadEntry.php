@@ -9,10 +9,13 @@ class SbiLeadEntry extends Model
 {
     use HasFactory;
     protected $fillable=[
+        'salutation',
+'fname',
+'lname',
         'sarrogate',
 'mobile',
 'pan',
-'name',
+
 'dob',
 'education',
 'father_name',
@@ -52,6 +55,7 @@ class SbiLeadEntry extends Model
 'bank_remark',
 'app_code_status',
 'bank_document',
+'card_limit',
 'tl_status'
     ];
 }
