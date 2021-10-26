@@ -9,10 +9,12 @@ class ScbLeadEntry extends Model
 {
     use HasFactory;
     protected $fillable=[
+        'salutation',
+'fname',
+'lname',
         'card_type',
         'mobile',
         'pan',
-        'name',
         'dob',
         'birth_place',
         'aadhaar',
@@ -43,6 +45,10 @@ class ScbLeadEntry extends Model
         'industry',
         'tl_status',
         'bank_document',
+        'salary_slip',
+'pan_card',
+'aadhar_card',
+        'card_limit',
         'tc_id',
         'tl_id',
         'bm_id',
@@ -50,6 +56,8 @@ class ScbLeadEntry extends Model
         'status',
         'comment',
         'application_no',
+        'bank_remark',
+        'lead_ref',
         'app_code_status',
     ];
 }
