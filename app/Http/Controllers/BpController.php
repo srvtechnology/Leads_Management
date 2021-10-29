@@ -14,7 +14,7 @@ class BpController extends Controller
         
             $alltc =User::select(DB::raw('user_id AS USER_ID, name AS NAME, email AS EMAIL, phone AS PHONE,bank as BANK, roles.role as DESIGNATION'))
         ->join('roles','users.role', '=', 'roles.id')
-        ->where('users.role',4)->where('users.delete',0)->get();
+        ->where('users.role',4)->where('users.delete',0)->orderBy('users.id', 'DESC')->get();
         
         
         // $i=0;

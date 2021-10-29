@@ -56,6 +56,10 @@ class SbiLeadEntry extends Model
 'app_code_status',
 'bank_document',
 'card_limit',
-'tl_status'
+'tl_status',
+'bank_pass',
+'salary_pass',
+'pan_pass',
+'aadhar_pass'
     ];
 }

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CitiLeadEntry;
+use App\Models\HdfcLeadEntry;
 use App\Models\Team;
 use App\Models\User;
 use Exception;
@@ -12,9 +12,9 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
-class CitiController extends Controller
+class HdfcController extends Controller
 {
-    public function lead_entry_citi(Request $r)
+    public function lead_entry_hdfc(Request $r)
     {
 
         $validator = Validator::make($r->all(), [
@@ -72,7 +72,7 @@ class CitiController extends Controller
                         $bm = $qry->bm;
                         $st = 11;
                     }
-                    CitiLeadEntry::create([
+                    HdfcLeadEntry::create([
 
                         'fname' => $r->fname,
                         'lname' => $r->lname,
@@ -112,7 +112,7 @@ class CitiController extends Controller
                     ]);
                     return response()->json(['msg' => "Lead Entry Submitted:)", 'flag' => 1]);
                 } else {
-                    CitiLeadEntry::where('id', $r->lead_id)->update([
+                    HdfcLeadEntry::where('id', $r->lead_id)->update([
 
                         'fname' => $r->fname,
                         'lname' => $r->lname,
@@ -150,15 +150,15 @@ class CitiController extends Controller
                    
                         if ($r->role == 2) {
                             if($r->tlstatus == 'Approve'){
-                                CitiLeadEntry::where('id', $r->lead_id)->update(['status' => 28,]);
+                                HdfcLeadEntry::where('id', $r->lead_id)->update(['status' => 28,]);
                             }elseif($r->tlstatus == 'Reject'){
-                                CitiLeadEntry::where('id', $r->lead_id)->update(['status' => 5,]);
+                                HdfcLeadEntry::where('id', $r->lead_id)->update(['status' => 5,]);
                             }elseif($r->tlstatus == 'e-KYC Done'){
-                                CitiLeadEntry::where('id', $r->lead_id)->update(['status' => 10,]);
+                                HdfcLeadEntry::where('id', $r->lead_id)->update(['status' => 10,]);
                             }elseif($r->tlstatus == 'v-KYC Done'){
-                                CitiLeadEntry::where('id', $r->lead_id)->update(['status' => 15,]);
+                                HdfcLeadEntry::where('id', $r->lead_id)->update(['status' => 15,]);
                             }elseif($r->tlstatus == 'Doc. Sent'){
-                                CitiLeadEntry::where('id', $r->lead_id)->update(['status' => 17,]);
+                                HdfcLeadEntry::where('id', $r->lead_id)->update(['status' => 17,]);
                             }
                         }
                        
@@ -171,16 +171,16 @@ class CitiController extends Controller
     }
 
 
-    public function getLeadCiti($lead_id)
+    public function getLeadHdfc($lead_id)
     {
-        $alltc = CitiLeadEntry::where('id', $lead_id)->first();
+        $alltc = HdfcLeadEntry::where('id', $lead_id)->first();
 
 
         return response()->json(['lead' => $alltc]);
     }
 
     
-    public function showCitiData(Request $r)
+    public function showHdfcData(Request $r)
     {
         // return response()->json($r->s_date);
         $date = date_create($r->s_date);
@@ -189,29 +189,29 @@ class CitiController extends Controller
         $e_date = date_format($date, "Y-m-d 23:59:59");
         $user = User::where('user_id', $r->id)->first();
         if ($user->role == 1) {
-            $alltc = CitiLeadEntry::select(DB::raw('citi_lead_entries.id as ID,citi_lead_entries.created_at as Date, citi_lead_entries.fname as FIRST_NAME,citi_lead_entries.lname as LAST_NAME, citi_lead_entries.pan as PAN,
-        citi_lead_entries.tc_id as TC, citi_lead_entries.tl_id as TL, citi_lead_entries.bm_id as BM, citi_lead_entries.application_no as APPLICATION_NO, 
-        citi_lead_entries.tl_status as TL_STATUS, statuses.status as STATUS, citi_lead_entries.comment as REMARK'))
-                ->join('statuses', 'statuses.id', '=', 'citi_lead_entries.status')->whereBetween('citi_lead_entries.created_at', [$s_date, $e_date])
-                ->where('bm_id', $r->id)->orderBy('citi_lead_entries.id', 'DESC')->get();
+            $alltc = HdfcLeadEntry::select(DB::raw('hdfc_lead_entries.id as ID,hdfc_lead_entries.created_at as Date, hdfc_lead_entries.fname as FIRST_NAME,hdfc_lead_entries.lname as LAST_NAME, hdfc_lead_entries.pan as PAN,
+        hdfc_lead_entries.tc_id as TC, hdfc_lead_entries.tl_id as TL, hdfc_lead_entries.bm_id as BM, hdfc_lead_entries.application_no as APPLICATION_NO, 
+        hdfc_lead_entries.tl_status as TL_STATUS, statuses.status as STATUS, hdfc_lead_entries.comment as REMARK'))
+                ->join('statuses', 'statuses.id', '=', 'hdfc_lead_entries.status')->whereBetween('hdfc_lead_entries.created_at', [$s_date, $e_date])
+                ->where('bm_id', $r->id)->orderBy('hdfc_lead_entries.id', 'DESC')->get();
         } elseif ($user->role == 2) {
-            $alltc = CitiLeadEntry::select(DB::raw('citi_lead_entries.id as ID,citi_lead_entries.created_at as Date, citi_lead_entries.fname as FIRST_NAME,citi_lead_entries.lname as LAST_NAME, citi_lead_entries.pan as PAN,
-        citi_lead_entries.tc_id as TC, citi_lead_entries.tl_id as TL, citi_lead_entries.bm_id as BM, citi_lead_entries.application_no as APPLICATION_NO,  
-        citi_lead_entries.tl_status as TL_STATUS, statuses.status as STATUS, citi_lead_entries.comment as REMARK'))
-                ->join('statuses', 'statuses.id', '=', 'citi_lead_entries.status')->whereBetween('citi_lead_entries.created_at', [$s_date, $e_date])
-                ->where('tl_id', $r->id)->orderBy('citi_lead_entries.id', 'DESC')->get();
+            $alltc = HdfcLeadEntry::select(DB::raw('hdfc_lead_entries.id as ID,hdfc_lead_entries.created_at as Date, hdfc_lead_entries.fname as FIRST_NAME,hdfc_lead_entries.lname as LAST_NAME, hdfc_lead_entries.pan as PAN,
+        hdfc_lead_entries.tc_id as TC, hdfc_lead_entries.tl_id as TL, hdfc_lead_entries.bm_id as BM, hdfc_lead_entries.application_no as APPLICATION_NO,  
+        hdfc_lead_entries.tl_status as TL_STATUS, statuses.status as STATUS, hdfc_lead_entries.comment as REMARK'))
+                ->join('statuses', 'statuses.id', '=', 'hdfc_lead_entries.status')->whereBetween('hdfc_lead_entries.created_at', [$s_date, $e_date])
+                ->where('tl_id', $r->id)->orderBy('hdfc_lead_entries.id', 'DESC')->get();
         } elseif ($user->role == 3) {
-            $alltc = CitiLeadEntry::select(DB::raw('citi_lead_entries.id as ID,citi_lead_entries.created_at as Date, citi_lead_entries.fname as FIRST_NAME,citi_lead_entries.lname as LAST_NAME, citi_lead_entries.pan as PAN,
-        citi_lead_entries.tc_id as TC, citi_lead_entries.tl_id as TL, citi_lead_entries.bm_id as BM, citi_lead_entries.application_no as APPLICATION_NO, 
-        citi_lead_entries.tl_status as TL_STATUS, statuses.status as STATUS, citi_lead_entries.comment as REMARK'))
-                ->join('statuses', 'statuses.id', '=', 'citi_lead_entries.status')->whereBetween('citi_lead_entries.created_at', [$s_date, $e_date])
-                ->where('tc_id', $r->id)->orderBy('citi_lead_entries.id', 'DESC')->get();
+            $alltc = HdfcLeadEntry::select(DB::raw('hdfc_lead_entries.id as ID,hdfc_lead_entries.created_at as Date, hdfc_lead_entries.fname as FIRST_NAME,hdfc_lead_entries.lname as LAST_NAME, hdfc_lead_entries.pan as PAN,
+        hdfc_lead_entries.tc_id as TC, hdfc_lead_entries.tl_id as TL, hdfc_lead_entries.bm_id as BM, hdfc_lead_entries.application_no as APPLICATION_NO, 
+        hdfc_lead_entries.tl_status as TL_STATUS, statuses.status as STATUS, hdfc_lead_entries.comment as REMARK'))
+                ->join('statuses', 'statuses.id', '=', 'hdfc_lead_entries.status')->whereBetween('hdfc_lead_entries.created_at', [$s_date, $e_date])
+                ->where('tc_id', $r->id)->orderBy('hdfc_lead_entries.id', 'DESC')->get();
         } elseif ($user->role == 4) {
-            $alltc = CitiLeadEntry::select(DB::raw('citi_lead_entries.id as ID,citi_lead_entries.created_at as Date, citi_lead_entries.fname as FIRST_NAME,citi_lead_entries.lname as LAST_NAME, citi_lead_entries.pan as PAN,
-        citi_lead_entries.tc_id as TC, citi_lead_entries.tl_id as TL, citi_lead_entries.bm_id as BM, citi_lead_entries.application_no as APPLICATION_NO,  
-        citi_lead_entries.tl_status as TL_STATUS, statuses.status as STATUS, citi_lead_entries.comment as REMARK'))
-                ->join('statuses', 'statuses.id', '=', 'citi_lead_entries.status')->whereBetween('citi_lead_entries.created_at', [$s_date, $e_date])
-                ->where('citi_lead_entries.status','!=', 11)->orderBy('citi_lead_entries.id', 'DESC')->get();
+            $alltc = HdfcLeadEntry::select(DB::raw('hdfc_lead_entries.id as ID,hdfc_lead_entries.created_at as Date, hdfc_lead_entries.fname as FIRST_NAME,hdfc_lead_entries.lname as LAST_NAME, hdfc_lead_entries.pan as PAN,
+        hdfc_lead_entries.tc_id as TC, hdfc_lead_entries.tl_id as TL, hdfc_lead_entries.bm_id as BM, hdfc_lead_entries.application_no as APPLICATION_NO,  
+        hdfc_lead_entries.tl_status as TL_STATUS, statuses.status as STATUS, hdfc_lead_entries.comment as REMARK'))
+                ->join('statuses', 'statuses.id', '=', 'hdfc_lead_entries.status')->whereBetween('hdfc_lead_entries.created_at', [$s_date, $e_date])
+                ->where('hdfc_lead_entries.status','!=', 11)->orderBy('hdfc_lead_entries.id', 'DESC')->get();
         }
 
         $i = 0;
@@ -236,7 +236,7 @@ class CitiController extends Controller
 
         return response()->json(['message' => 'Not found!'], 404);
     }
-    public function showCitiSummaryTc(Request $r)
+    public function showHdfcSummaryTc(Request $r)
     {
         $date = date_create($r->s_date);
         $s_date = date_format($date, "Y-m-d 00:00:00");
@@ -258,16 +258,16 @@ class CitiController extends Controller
         }
         $i = 0;
         foreach ($alltc as $row) {
-            $qd = CitiLeadEntry::where('tc_id', $row->TC)->where('status', 1)->whereBetween('citi_lead_entries.created_at', [$s_date, $e_date])->get();
-            $acp = CitiLeadEntry::where('tc_id', $row->TC)->where('status', 2)->whereBetween('citi_lead_entries.created_at', [$s_date, $e_date])->get();
-            $acr = CitiLeadEntry::where('tc_id', $row->TC)->where('status', 3)->whereBetween('citi_lead_entries.created_at', [$s_date, $e_date])->get();
-            $nc = CitiLeadEntry::where('tc_id', $row->TC)->where('status', 4)->whereBetween('citi_lead_entries.created_at', [$s_date, $e_date])->get();
-            $dec = CitiLeadEntry::where('tc_id', $row->TC)->where('status', 5)->whereBetween('citi_lead_entries.created_at', [$s_date, $e_date])->get();
-            $apr = CitiLeadEntry::where('tc_id', $row->TC)->where('status', 6)->whereBetween('citi_lead_entries.created_at', [$s_date, $e_date])->get();
-            $pfv = CitiLeadEntry::where('tc_id', $row->TC)->where('status', 7)->whereBetween('citi_lead_entries.created_at', [$s_date, $e_date])->get();
-            $cb = CitiLeadEntry::where('tc_id', $row->TC)->where('status', 8)->whereBetween('citi_lead_entries.created_at', [$s_date, $e_date])->get();
-            // $acnr=CitiLeadEntry::where('tc_id',$row->TC)->where('status',9)->get();
-            $ekyc = CitiLeadEntry::where('tc_id', $row->TC)->where('status', 10)->whereBetween('citi_lead_entries.created_at', [$s_date, $e_date])->get();
+            $qd = HdfcLeadEntry::where('tc_id', $row->TC)->where('status', 1)->whereBetween('hdfc_lead_entries.created_at', [$s_date, $e_date])->get();
+            $acp = HdfcLeadEntry::where('tc_id', $row->TC)->where('status', 2)->whereBetween('hdfc_lead_entries.created_at', [$s_date, $e_date])->get();
+            $acr = HdfcLeadEntry::where('tc_id', $row->TC)->where('status', 3)->whereBetween('hdfc_lead_entries.created_at', [$s_date, $e_date])->get();
+            $nc = HdfcLeadEntry::where('tc_id', $row->TC)->where('status', 4)->whereBetween('hdfc_lead_entries.created_at', [$s_date, $e_date])->get();
+            $dec = HdfcLeadEntry::where('tc_id', $row->TC)->where('status', 5)->whereBetween('hdfc_lead_entries.created_at', [$s_date, $e_date])->get();
+            $apr = HdfcLeadEntry::where('tc_id', $row->TC)->where('status', 6)->whereBetween('hdfc_lead_entries.created_at', [$s_date, $e_date])->get();
+            $pfv = HdfcLeadEntry::where('tc_id', $row->TC)->where('status', 7)->whereBetween('hdfc_lead_entries.created_at', [$s_date, $e_date])->get();
+            $cb = HdfcLeadEntry::where('tc_id', $row->TC)->where('status', 8)->whereBetween('hdfc_lead_entries.created_at', [$s_date, $e_date])->get();
+            // $acnr=HdfcLeadEntry::where('tc_id',$row->TC)->where('status',9)->get();
+            $ekyc = HdfcLeadEntry::where('tc_id', $row->TC)->where('status', 10)->whereBetween('hdfc_lead_entries.created_at', [$s_date, $e_date])->get();
             $alltc[$i]->Verification_pending = count($pfv) + count($qd) + count($acp) + count($acr) + count($nc) + count($dec) + count($apr) + count($ekyc) + count($cb);
             $alltc[$i]->QD = count($qd) + count($acp) + count($acr) + count($nc) + count($dec) + count($apr) + count($cb);
             $alltc[$i]->App_code_pending = count($acp) + count($acr) + count($nc) + count($dec) + count($apr) + count($cb);
@@ -298,7 +298,7 @@ class CitiController extends Controller
 
         return response()->json(['message' => 'Not found!'], 404);
     }
-    public function showCitiSummaryTl(Request $r)
+    public function showHdfcSummaryTl(Request $r)
     {
         $date = date_create($r->s_date);
         $s_date = date_format($date, "Y-m-d 00:00:00");
@@ -320,16 +320,16 @@ class CitiController extends Controller
         }
         $i = 0;
         foreach ($alltc as $row) {
-            $qd = CitiLeadEntry::where('tl_id', $row->TL)->where('tc_id', null)->where('status', 1)->whereBetween('citi_lead_entries.created_at', [$s_date, $e_date])->get();
-            $acp = CitiLeadEntry::where('tl_id', $row->TL)->where('tc_id', null)->where('status', 2)->whereBetween('citi_lead_entries.created_at', [$s_date, $e_date])->get();
-            $acr = CitiLeadEntry::where('tl_id', $row->TL)->where('tc_id', null)->where('status', 3)->whereBetween('citi_lead_entries.created_at', [$s_date, $e_date])->get();
-            $nc = CitiLeadEntry::where('tl_id', $row->TL)->where('tc_id', null)->where('status', 4)->whereBetween('citi_lead_entries.created_at', [$s_date, $e_date])->get();
-            $dec = CitiLeadEntry::where('tl_id', $row->TL)->where('tc_id', null)->where('status', 5)->whereBetween('citi_lead_entries.created_at', [$s_date, $e_date])->get();
-            $apr = CitiLeadEntry::where('tl_id', $row->TL)->where('tc_id', null)->where('status', 6)->whereBetween('citi_lead_entries.created_at', [$s_date, $e_date])->get();
-            $pfv = CitiLeadEntry::where('tl_id', $row->TL)->where('tc_id', null)->where('status', 7)->whereBetween('citi_lead_entries.created_at', [$s_date, $e_date])->get();
-            $cb = CitiLeadEntry::where('tl_id', $row->TL)->where('tc_id', null)->where('status', 8)->whereBetween('citi_lead_entries.created_at', [$s_date, $e_date])->get();
-            // $acnr=CitiLeadEntry::where('tl_id',$row->TL)->where('tc_id',null)->where('status',9)->get();
-            $ekyc = CitiLeadEntry::where('tl_id', $row->TL)->where('tc_id', null)->where('status', 10)->whereBetween('citi_lead_entries.created_at', [$s_date, $e_date])->get();
+            $qd = HdfcLeadEntry::where('tl_id', $row->TL)->where('tc_id', null)->where('status', 1)->whereBetween('hdfc_lead_entries.created_at', [$s_date, $e_date])->get();
+            $acp = HdfcLeadEntry::where('tl_id', $row->TL)->where('tc_id', null)->where('status', 2)->whereBetween('hdfc_lead_entries.created_at', [$s_date, $e_date])->get();
+            $acr = HdfcLeadEntry::where('tl_id', $row->TL)->where('tc_id', null)->where('status', 3)->whereBetween('hdfc_lead_entries.created_at', [$s_date, $e_date])->get();
+            $nc = HdfcLeadEntry::where('tl_id', $row->TL)->where('tc_id', null)->where('status', 4)->whereBetween('hdfc_lead_entries.created_at', [$s_date, $e_date])->get();
+            $dec = HdfcLeadEntry::where('tl_id', $row->TL)->where('tc_id', null)->where('status', 5)->whereBetween('hdfc_lead_entries.created_at', [$s_date, $e_date])->get();
+            $apr = HdfcLeadEntry::where('tl_id', $row->TL)->where('tc_id', null)->where('status', 6)->whereBetween('hdfc_lead_entries.created_at', [$s_date, $e_date])->get();
+            $pfv = HdfcLeadEntry::where('tl_id', $row->TL)->where('tc_id', null)->where('status', 7)->whereBetween('hdfc_lead_entries.created_at', [$s_date, $e_date])->get();
+            $cb = HdfcLeadEntry::where('tl_id', $row->TL)->where('tc_id', null)->where('status', 8)->whereBetween('hdfc_lead_entries.created_at', [$s_date, $e_date])->get();
+            // $acnr=HdfcLeadEntry::where('tl_id',$row->TL)->where('tc_id',null)->where('status',9)->get();
+            $ekyc = HdfcLeadEntry::where('tl_id', $row->TL)->where('tc_id', null)->where('status', 10)->whereBetween('hdfc_lead_entries.created_at', [$s_date, $e_date])->get();
             $alltc[$i]->Verification_pending = count($pfv) + count($qd) + count($acp) + count($acr) + count($nc) + count($dec) + count($apr) + count($ekyc) + count($cb);
             $alltc[$i]->QD = count($qd) + count($acp) + count($acr) + count($nc) + count($dec) + count($apr) + count($cb);
             $alltc[$i]->App_code_pending = count($acp) + count($acr) + count($nc) + count($dec) + count($apr) + count($cb);
@@ -360,7 +360,7 @@ class CitiController extends Controller
 
         return response()->json(['message' => 'Not found!'], 404);
     }
-    public function showCitiSummaryBm(Request $r)
+    public function showHdfcSummaryBm(Request $r)
     {
         $date = date_create($r->s_date);
         $s_date = date_format($date, "Y-m-d 00:00:00");
@@ -382,16 +382,16 @@ class CitiController extends Controller
         }
         $i = 0;
         foreach ($alltc as $row) {
-            $qd = CitiLeadEntry::where('bm_id', $row->BM)->where('tl_id', null)->where('tc_id', null)->where('status', 1)->whereBetween('citi_lead_entries.created_at', [$s_date, $e_date])->get();
-            $acp = CitiLeadEntry::where('bm_id', $row->BM)->where('tl_id', null)->where('tc_id', null)->where('status', 2)->whereBetween('citi_lead_entries.created_at', [$s_date, $e_date])->get();
-            $acr = CitiLeadEntry::where('bm_id', $row->BM)->where('tl_id', null)->where('tc_id', null)->where('status', 3)->whereBetween('citi_lead_entries.created_at', [$s_date, $e_date])->get();
-            $nc = CitiLeadEntry::where('bm_id', $row->BM)->where('tl_id', null)->where('tc_id', null)->where('status', 4)->whereBetween('citi_lead_entries.created_at', [$s_date, $e_date])->get();
-            $dec = CitiLeadEntry::where('bm_id', $row->BM)->where('tl_id', null)->where('tc_id', null)->where('status', 5)->whereBetween('citi_lead_entries.created_at', [$s_date, $e_date])->get();
-            $apr = CitiLeadEntry::where('bm_id', $row->BM)->where('tl_id', null)->where('tc_id', null)->where('status', 6)->whereBetween('citi_lead_entries.created_at', [$s_date, $e_date])->get();
-            $pfv = CitiLeadEntry::where('bm_id', $row->BM)->where('tl_id', null)->where('tc_id', null)->where('status', 7)->whereBetween('citi_lead_entries.created_at', [$s_date, $e_date])->get();
-            $cb = CitiLeadEntry::where('bm_id', $row->BM)->where('tl_id', null)->where('tc_id', null)->where('status', 8)->whereBetween('citi_lead_entries.created_at', [$s_date, $e_date])->get();
-            // $acnr=CitiLeadEntry::where('bm_id',$row->BM)->where('tl_id',null)->where('tc_id',null)->where('status',9)->get();
-            $ekyc = CitiLeadEntry::where('bm_id', $row->BM)->where('tl_id', null)->where('tc_id', null)->where('status', 10)->whereBetween('citi_lead_entries.created_at', [$s_date, $e_date])->get();
+            $qd = HdfcLeadEntry::where('bm_id', $row->BM)->where('tl_id', null)->where('tc_id', null)->where('status', 1)->whereBetween('hdfc_lead_entries.created_at', [$s_date, $e_date])->get();
+            $acp = HdfcLeadEntry::where('bm_id', $row->BM)->where('tl_id', null)->where('tc_id', null)->where('status', 2)->whereBetween('hdfc_lead_entries.created_at', [$s_date, $e_date])->get();
+            $acr = HdfcLeadEntry::where('bm_id', $row->BM)->where('tl_id', null)->where('tc_id', null)->where('status', 3)->whereBetween('hdfc_lead_entries.created_at', [$s_date, $e_date])->get();
+            $nc = HdfcLeadEntry::where('bm_id', $row->BM)->where('tl_id', null)->where('tc_id', null)->where('status', 4)->whereBetween('hdfc_lead_entries.created_at', [$s_date, $e_date])->get();
+            $dec = HdfcLeadEntry::where('bm_id', $row->BM)->where('tl_id', null)->where('tc_id', null)->where('status', 5)->whereBetween('hdfc_lead_entries.created_at', [$s_date, $e_date])->get();
+            $apr = HdfcLeadEntry::where('bm_id', $row->BM)->where('tl_id', null)->where('tc_id', null)->where('status', 6)->whereBetween('hdfc_lead_entries.created_at', [$s_date, $e_date])->get();
+            $pfv = HdfcLeadEntry::where('bm_id', $row->BM)->where('tl_id', null)->where('tc_id', null)->where('status', 7)->whereBetween('hdfc_lead_entries.created_at', [$s_date, $e_date])->get();
+            $cb = HdfcLeadEntry::where('bm_id', $row->BM)->where('tl_id', null)->where('tc_id', null)->where('status', 8)->whereBetween('hdfc_lead_entries.created_at', [$s_date, $e_date])->get();
+            // $acnr=HdfcLeadEntry::where('bm_id',$row->BM)->where('tl_id',null)->where('tc_id',null)->where('status',9)->get();
+            $ekyc = HdfcLeadEntry::where('bm_id', $row->BM)->where('tl_id', null)->where('tc_id', null)->where('status', 10)->whereBetween('hdfc_lead_entries.created_at', [$s_date, $e_date])->get();
             $alltc[$i]->Verification_pending = count($pfv) + count($qd) + count($acp) + count($acr) + count($nc) + count($dec) + count($apr) + count($ekyc) + count($cb);
             $alltc[$i]->QD = count($qd) + count($acp) + count($acr) + count($nc) + count($dec) + count($apr) + count($cb);
             $alltc[$i]->App_code_pending = count($acp) + count($acr) + count($nc) + count($dec) + count($apr) + count($cb);
@@ -423,7 +423,7 @@ class CitiController extends Controller
         return response()->json(['message' => 'Not found!'], 404);
     }
 
-    public static function save_file_citi(Request $request)
+    public static function save_file_hdfc(Request $request)
     {
 
         try {
@@ -433,16 +433,16 @@ class CitiController extends Controller
             $destinationPath = public_path('/files');
             $file->move($destinationPath, $file_name);
             if ($request->type == 1) {
-                CitiLeadEntry::where('id', $request->id)->update(['bank_document' => $file_name,'bank_pass'=>$request->bank_pass]);
+                HdfcLeadEntry::where('id', $request->id)->update(['bank_document' => $file_name,'bank_pass'=>$request->bank_pass]);
                 return response()->json(['msg' => "Bank Statement uploaded"]);
             } elseif ($request->type == 2) {
-                CitiLeadEntry::where('id', $request->id)->update(['salary_slip' => $file_name,'salary_pass'=>$request->salary_pass]);
+                HdfcLeadEntry::where('id', $request->id)->update(['salary_slip' => $file_name,'salary_pass'=>$request->salary_pass]);
                 return response()->json(['msg' => "Salary Slip uploaded"]);
             } elseif ($request->type == 3) {
-                CitiLeadEntry::where('id', $request->id)->update(['pan_card' => $file_name,'pan_pass'=>$request->pan_pass]);
+                HdfcLeadEntry::where('id', $request->id)->update(['pan_card' => $file_name,'pan_pass'=>$request->pan_pass]);
                 return response()->json(['msg' => "Pan Card uploaded"]);
             } elseif ($request->type == 4) {
-                CitiLeadEntry::where('id', $request->id)->update(['aadhar_card' => $file_name,'aadhar_pass'=>$request->aadhar_pass]);
+                HdfcLeadEntry::where('id', $request->id)->update(['aadhar_card' => $file_name,'aadhar_pass'=>$request->aadhar_pass]);
                 return response()->json(['msg' => "Aadhaar Card uploaded"]);
             }
         } catch (Exception $e) {
@@ -450,9 +450,10 @@ class CitiController extends Controller
         }
     }
 
-    public static function delete_citi_lead(Request $request){
+    public static function delete_hdfc_lead(Request $request){
+
         try{
-            CitiLeadEntry::where('id',$request->id)->delete();
+            HdfcLeadEntry::where('id',$request->id)->delete();
             return response()->json(['msg'=>"Lead Deleted"]);
         }catch(Exception $e){
             return response()->json(['msg'=>$e->getMessage()]);

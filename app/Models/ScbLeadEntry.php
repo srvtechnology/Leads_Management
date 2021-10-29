@@ -59,5 +59,9 @@ class ScbLeadEntry extends Model
         'bank_remark',
         'lead_ref',
         'app_code_status',
+        'bank_pass',
+'salary_pass',
+'pan_pass',
+'aadhar_pass'
     ];
 }

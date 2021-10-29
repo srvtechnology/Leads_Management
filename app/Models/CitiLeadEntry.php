@@ -25,7 +25,6 @@ class CitiLeadEntry extends Model
 'resi_pin',
 'curr_adrs_proof',
 'resi_phone',
-'sbi_ac',
 'email',
 'occupation',
 'designation',
@@ -35,10 +34,6 @@ class CitiLeadEntry extends Model
 'office_pin',
 'office_phone',
 'aadhaar_linked_mobile',
-'appointment_date',
-'appointment_time',
-'card_applied',
-'appointment_adrs',
 'salary_slip',
 'pan_card',
 'aadhar_card',
@@ -50,11 +45,14 @@ class CitiLeadEntry extends Model
 'status',
 'comment',
 'application_no',
-'lead_ref',
 'bank_remark',
 'app_code_status',
 'bank_document',
 'card_limit',
-'tl_status'
+'tl_status',
+'bank_pass',
+'salary_pass',
+'pan_pass',
+'aadhar_pass'
     ];
 }

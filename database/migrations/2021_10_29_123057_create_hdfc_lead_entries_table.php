@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCitiLeadEntriesTable extends Migration
+class CreateHdfcLeadEntriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateCitiLeadEntriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('citi_lead_entries', function (Blueprint $table) {
+        Schema::create('hdfc_lead_entries', function (Blueprint $table) {
             $table->id();
             $table->string('fname')->nullable();
             $table->string('lname')->nullable();
@@ -56,6 +56,10 @@ class CreateCitiLeadEntriesTable extends Migration
             $table->string('bank_remark')->nullable();
             $table->string('card_limit')->nullable();
             $table->boolean('app_code_status')->default(0)->nullable();
+            $table->string('bank_pass')->nullable();
+            $table->string('salary_pass')->nullable();
+            $table->string('pan_pass')->nullable();
+            $table->string('aadhar_pass')->nullable();
             $table->timestamps();
         });
     }
@@ -67,6 +71,6 @@ class CreateCitiLeadEntriesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('citi_lead_entries');
+        Schema::dropIfExists('hdfc_lead_entries');
     }
 }

@@ -16,11 +16,11 @@ class TcController extends Controller
         if($usr->role ==1){
             $alltc =User::select(DB::raw('user_id AS USER_ID, name AS NAME, email AS EMAIL, phone AS PHONE, roles.role as DESIGNATION'))
         ->join('teams','users.user_id', '=', 'teams.tc')->join('roles','users.role', '=', 'roles.id')
-        ->where('users.role',3)->where('users.delete',0)->where('teams.bm',$r->id)->get();
+        ->where('users.role',3)->where('users.delete',0)->where('teams.bm',$r->id)->orderBy('users.id', 'DESC')->get();
         }elseif($usr->role ==2){
             $alltc =User::select(DB::raw('user_id AS USER_ID, name AS NAME, email AS EMAIL, phone AS PHONE, roles.role as DESIGNATION'))
         ->join('teams','users.user_id', '=', 'teams.tc')->join('roles','users.role', '=', 'roles.id')
-        ->where('users.role',3)->where('users.delete',0)->where('teams.tl',$r->id)->get();
+        ->where('users.role',3)->where('users.delete',0)->where('teams.tl',$r->id)->orderBy('users.id', 'DESC')->get();
         }
         
         $i=0;

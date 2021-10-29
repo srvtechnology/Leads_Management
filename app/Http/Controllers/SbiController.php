@@ -244,25 +244,25 @@ class SbiController extends Controller
         $e_date= date_format($date,"Y-m-d 23:59:59");
         $user = User::where('user_id', $r->id)->first();
         if ($user->role == 1) {
-            $alltc = SbiLeadEntry::select(DB::raw('sbi_lead_entries.id as ID, sbi_lead_entries.salutation as Salutation, sbi_lead_entries.fname as FIRST_NAME,sbi_lead_entries.lname as LAST_NAME, sbi_lead_entries.pan as PAN,
+            $alltc = SbiLeadEntry::select(DB::raw('sbi_lead_entries.id as ID, sbi_lead_entries.created_at as Date, sbi_lead_entries.fname as FIRST_NAME,sbi_lead_entries.lname as LAST_NAME, sbi_lead_entries.pan as PAN,
         sbi_lead_entries.tc_id as TC, sbi_lead_entries.tl_id as TL, sbi_lead_entries.bm_id as BM, sbi_lead_entries.application_no as APPLICATION_NO,sbi_lead_entries.lead_ref as LEAD_REFERENCE, 
         sbi_lead_entries.tl_status as TL_STATUS,sbi_lead_entries.bank_remark as BANK_REMARK, statuses.status as STATUS, sbi_lead_entries.comment as REMARK'))
                 ->join('statuses', 'statuses.id', '=', 'sbi_lead_entries.status')->whereBetween('sbi_lead_entries.created_at', [$s_date,$e_date])
                 ->where('bm_id', $r->id)->where('pan_check', 1)->orderBy('sbi_lead_entries.id', 'DESC')->get();
         } elseif ($user->role == 2) {
-            $alltc = SbiLeadEntry::select(DB::raw('sbi_lead_entries.id as ID, sbi_lead_entries.salutation as Salutation, sbi_lead_entries.fname as FIRST_NAME,sbi_lead_entries.lname as LAST_NAME, sbi_lead_entries.pan as PAN,
+            $alltc = SbiLeadEntry::select(DB::raw('sbi_lead_entries.id as ID, sbi_lead_entries.created_at as Date, sbi_lead_entries.fname as FIRST_NAME,sbi_lead_entries.lname as LAST_NAME, sbi_lead_entries.pan as PAN,
         sbi_lead_entries.tc_id as TC, sbi_lead_entries.tl_id as TL, sbi_lead_entries.bm_id as BM, sbi_lead_entries.application_no as APPLICATION_NO, sbi_lead_entries.lead_ref as LEAD_REFERENCE, 
         sbi_lead_entries.tl_status as TL_STATUS,sbi_lead_entries.bank_remark as BANK_REMARK, statuses.status as STATUS, sbi_lead_entries.comment as REMARK'))
                 ->join('statuses', 'statuses.id', '=', 'sbi_lead_entries.status')->whereBetween('sbi_lead_entries.created_at', [$s_date,$e_date])
                 ->where('tl_id', $r->id)->where('pan_check', 1)->orderBy('sbi_lead_entries.id', 'DESC')->get();
         } elseif ($user->role == 3) {
-            $alltc = SbiLeadEntry::select(DB::raw('sbi_lead_entries.id as ID, sbi_lead_entries.salutation as Salutation, sbi_lead_entries.fname as FIRST_NAME,sbi_lead_entries.lname as LAST_NAME, sbi_lead_entries.pan as PAN,
+            $alltc = SbiLeadEntry::select(DB::raw('sbi_lead_entries.id as ID, sbi_lead_entries.created_at as Date, sbi_lead_entries.fname as FIRST_NAME,sbi_lead_entries.lname as LAST_NAME, sbi_lead_entries.pan as PAN,
         sbi_lead_entries.tc_id as TC, sbi_lead_entries.tl_id as TL, sbi_lead_entries.bm_id as BM, sbi_lead_entries.application_no as APPLICATION_NO,sbi_lead_entries.lead_ref as LEAD_REFERENCE, 
         sbi_lead_entries.tl_status as TL_STATUS,sbi_lead_entries.bank_remark as BANK_REMARK, statuses.status as STATUS, sbi_lead_entries.comment as REMARK'))
                 ->join('statuses', 'statuses.id', '=', 'sbi_lead_entries.status')->whereBetween('sbi_lead_entries.created_at', [$s_date,$e_date])
                 ->where('tc_id', $r->id)->where('pan_check', 1)->orderBy('sbi_lead_entries.id', 'DESC')->get();
         } elseif ($user->role == 4) {
-            $alltc = SbiLeadEntry::select(DB::raw('sbi_lead_entries.id as ID, sbi_lead_entries.salutation as Salutation, sbi_lead_entries.fname as FIRST_NAME,sbi_lead_entries.lname as LAST_NAME, sbi_lead_entries.pan as PAN,
+            $alltc = SbiLeadEntry::select(DB::raw('sbi_lead_entries.id as ID, sbi_lead_entries.created_at as Date, sbi_lead_entries.fname as FIRST_NAME,sbi_lead_entries.lname as LAST_NAME, sbi_lead_entries.pan as PAN,
         sbi_lead_entries.tc_id as TC, sbi_lead_entries.tl_id as TL, sbi_lead_entries.bm_id as BM, sbi_lead_entries.application_no as APPLICATION_NO, sbi_lead_entries.lead_ref as LEAD_REFERENCE, 
         sbi_lead_entries.tl_status as TL_STATUS,sbi_lead_entries.bank_remark as BANK_REMARK, statuses.status as STATUS, sbi_lead_entries.comment as REMARK'))
                 ->join('statuses', 'statuses.id', '=', 'sbi_lead_entries.status')->whereBetween('sbi_lead_entries.created_at', [$s_date,$e_date])
@@ -495,16 +495,16 @@ class SbiController extends Controller
             $destinationPath = public_path('/files');
             $file->move($destinationPath, $file_name);
             if ($request->type == 1) {
-                SbiLeadEntry::where('id', $request->id)->update(['bank_document' => $file_name]);
+                SbiLeadEntry::where('id', $request->id)->update(['bank_document' => $file_name,'bank_pass'=>$request->bank_pass]);
                 return response()->json(['msg' => "Bank Statement uploaded"]);
             } elseif ($request->type == 2) {
-                SbiLeadEntry::where('id', $request->id)->update(['salary_slip' => $file_name]);
+                SbiLeadEntry::where('id', $request->id)->update(['salary_slip' => $file_name,'salary_pass'=>$request->salary_pass]);
                 return response()->json(['msg' => "Salary Slip uploaded"]);
             } elseif ($request->type == 3) {
-                SbiLeadEntry::where('id', $request->id)->update(['pan_card' => $file_name]);
+                SbiLeadEntry::where('id', $request->id)->update(['pan_card' => $file_name,'pan_pass'=>$request->pan_pass]);
                 return response()->json(['msg' => "Pan Card uploaded"]);
             } elseif ($request->type == 4) {
-                SbiLeadEntry::where('id', $request->id)->update(['aadhar_card' => $file_name]);
+                SbiLeadEntry::where('id', $request->id)->update(['aadhar_card' => $file_name,'aadhar_pass'=>$request->aadhar_pass]);
                 return response()->json(['msg' => "Aadhaar Card uploaded"]);
             }
         } catch (Exception $e) {
