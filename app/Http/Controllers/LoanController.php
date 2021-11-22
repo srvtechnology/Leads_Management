@@ -42,12 +42,12 @@ class LoanController extends Controller
         if(empty($r->mobile)){
             return response()->json(['msg'=>'mobile is required', 'flag'=>0]);
         }
-        if($r->resi_phone){
-            $res= (!preg_match("/^[6-9][0-9]{9}$/", $r->resi_phone)) ? FALSE : TRUE;
-            if($res == false){
-                return response()->json(['msg'=>"Please Enter Valid resi phone", 'flag'=>0]);
-            }
-        }
+        // if($r->resi_phone){
+        //     $res= (!preg_match("/^[6-9][0-9]{9}$/", $r->resi_phone)) ? FALSE : TRUE;
+        //     if($res == false){
+        //         return response()->json(['msg'=>"Please Enter Valid resi phone", 'flag'=>0]);
+        //     }
+        // }
         if($r->mobile){
             $res= (!preg_match("/^[6-9][0-9]{9}$/", $r->mobile)) ? FALSE : TRUE;
             if($res == false){
