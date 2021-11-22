@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ScbLeadEntry;
+
+use App\Models\IIBLeadEntry;
 use App\Models\Team;
 use App\Models\User;
 use Exception;
@@ -12,9 +13,9 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
-class ScbController extends Controller
+class IIBController extends Controller
 {
-    public function lead_entry_scb(Request $request)
+    public function lead_entry_IIB(Request $request)
     {
         $r = json_decode($request->data);
         $card_limit = '';
@@ -33,14 +34,14 @@ class ScbController extends Controller
         if(empty($r->card_type)){
             return response()->json(['msg'=>'card_type is required', 'flag'=>0]);
         }
-        if(empty($r->mobile)){
-            return response()->json(['msg'=>'mobile is required', 'flag'=>0]);
-        }
         if(empty($r->pan)){
             return response()->json(['msg'=>'pan is required', 'flag'=>0]);
         }
         if(empty($r->dob)){
             return response()->json(['msg'=>'dob is required', 'flag'=>0]);
+        }
+        if(empty($r->mobile)){
+            return response()->json(['msg'=>'mobile is required', 'flag'=>0]);
         }
         if($r->resi_phone){
             $res= (!preg_match("/^[6-9][0-9]{9}$/", $r->resi_phone)) ? FALSE : TRUE;
@@ -168,9 +169,9 @@ class ScbController extends Controller
                         $tc = $qry->tc;
                         $tl = $qry->tl;
                         $bm = $qry->bm;
-                        $st = 19;
+                        $st = 11;
                     }
-                    $lead = ScbLeadEntry::create([
+                    $lead = IIBLeadEntry::create([
     
                         'card_type' => $r->card_type,
                         'salutation' => $r->salutation,
@@ -216,7 +217,7 @@ class ScbController extends Controller
                         $file_name = time() . 'ba.' . $file->getClientOriginalExtension();
                         $destinationPath = public_path('/files');
                         $file->move($destinationPath, $file_name);
-                        ScbLeadEntry::where('id', $lead->id)->update(['bank_document' => $file_name]);
+                        IIBLeadEntry::where('id', $lead->id)->update(['bank_document' => $file_name]);
     
                     }
                     if ($request->salary_slip != null) {
@@ -231,7 +232,7 @@ class ScbController extends Controller
                             $i++;
                         }
                         $allFile = json_encode($allFile);
-                        $ad = ScbLeadEntry::where('id', $lead->id)->update(['salary_slip' => $allFile]);
+                        $ad = IIBLeadEntry::where('id', $lead->id)->update(['salary_slip' => $allFile]);
     
                     }
                     if ($request->pan_card != "null") {
@@ -240,7 +241,7 @@ class ScbController extends Controller
                         $file_name = time() . 'pa.' . $file->getClientOriginalExtension();
                         $destinationPath = public_path('/files');
                         $file->move($destinationPath, $file_name);
-                        ScbLeadEntry::where('id', $lead->id)->update(['pan_card' => $file_name]);
+                        IIBLeadEntry::where('id', $lead->id)->update(['pan_card' => $file_name]);
                         
                     }
                     if ($request->aadhar_card != "null") {
@@ -248,7 +249,7 @@ class ScbController extends Controller
                         $file_name = time() . 'ad.' . $file->getClientOriginalExtension();
                         $destinationPath = public_path('/files');
                         $file->move($destinationPath, $file_name);
-                        ScbLeadEntry::where('id', $lead->id)->update(['aadhar_card' => $file_name]);
+                        IIBLeadEntry::where('id', $lead->id)->update(['aadhar_card' => $file_name]);
                         
                     }
                     if ($request->other_doc != null) {
@@ -263,12 +264,12 @@ class ScbController extends Controller
                             $i++;
                         }
                         $allFile = json_encode($allFile);
-                        $ad = ScbLeadEntry::where('id', $lead->id)->update(['other_doc' => $allFile]);
+                        $ad = IIBLeadEntry::where('id', $lead->id)->update(['other_doc' => $allFile]);
     
                     }
                     return response()->json(['msg' => "Lead Entry Submitted:)", 'flag' => 1]);
                 }else{
-                    ScbLeadEntry::where('id',$r->lead_id)->update([
+                    IIBLeadEntry::where('id',$r->lead_id)->update([
     
                         'card_type' => $r->card_type,
                         'salutation' => $r->salutation,
@@ -313,16 +314,16 @@ class ScbController extends Controller
                     ]);
 
                     if ($r->role == 2) {
-                        if($r->tlstatus == 'Approve' && $r->status == 0){
-                            ScbLeadEntry::where('id', $r->lead_id)->update(['status' => 20,]);
+                        if($r->tlstatus == 'Approve' ){
+                            IIBLeadEntry::where('id', $r->lead_id)->update(['status' => 20,]);
                         }elseif($r->tlstatus == 'Reject'){
-                            ScbLeadEntry::where('id', $r->lead_id)->update(['status' => 5,]);
+                            IIBLeadEntry::where('id', $r->lead_id)->update(['status' => 5,]);
                         }elseif($r->tlstatus == 'v-KYC Done'){
-                            ScbLeadEntry::where('id', $r->lead_id)->update(['status' => 15,]);
+                            IIBLeadEntry::where('id', $r->lead_id)->update(['status' => 15,]);
                         }elseif($r->tlstatus == 'e-Sign Done'){
-                            ScbLeadEntry::where('id', $r->lead_id)->update(['status' => 26,]);
+                            IIBLeadEntry::where('id', $r->lead_id)->update(['status' => 26,]);
                         }elseif($r->tlstatus == 'Aadhaar Auth Done'){
-                            ScbLeadEntry::where('id', $r->lead_id)->update(['status' => 27,]);
+                            IIBLeadEntry::where('id', $r->lead_id)->update(['status' => 27,]);
                         }
                     }
                     if ($request->bank_doc != "null") {
@@ -330,7 +331,7 @@ class ScbController extends Controller
                         $file_name = time() . 'ba.' . $file->getClientOriginalExtension();
                         $destinationPath = public_path('/files');
                         $file->move($destinationPath, $file_name);
-                        ScbLeadEntry::where('id', $r->lead_id)->update(['bank_document' => $file_name,'bank_pass'=>$request->bank_pass]);
+                        IIBLeadEntry::where('id', $r->lead_id)->update(['bank_document' => $file_name,'bank_pass'=>$request->bank_pass]);
     
                     }
                     if ($request->salary_slip != null) {
@@ -345,7 +346,7 @@ class ScbController extends Controller
                             $i++;
                         }
                         $allFile = json_encode($allFile);
-                        $ad = ScbLeadEntry::where('id', $r->lead_id)->update(['salary_slip' => $allFile]);
+                        $ad = IIBLeadEntry::where('id', $r->lead_id)->update(['salary_slip' => $allFile]);
     
                     }
                     if ($request->pan_card != "null") {
@@ -354,7 +355,7 @@ class ScbController extends Controller
                         $file_name = time() . 'pa.' . $file->getClientOriginalExtension();
                         $destinationPath = public_path('/files');
                         $file->move($destinationPath, $file_name);
-                        ScbLeadEntry::where('id', $r->lead_id)->update(['pan_card' => $file_name]);
+                        IIBLeadEntry::where('id', $r->lead_id)->update(['pan_card' => $file_name]);
                         
                     }
                     if ($request->aadhar_card != "null") {
@@ -362,7 +363,7 @@ class ScbController extends Controller
                         $file_name = time() . 'ad.' . $file->getClientOriginalExtension();
                         $destinationPath = public_path('/files');
                         $file->move($destinationPath, $file_name);
-                        ScbLeadEntry::where('id', $r->lead_id)->update(['aadhar_card' => $file_name]);
+                        IIBLeadEntry::where('id', $r->lead_id)->update(['aadhar_card' => $file_name]);
                         
                     }
                     // return response()->json($request->other_doc);
@@ -379,7 +380,7 @@ class ScbController extends Controller
                             $i++;
                         }
                         $allFile = json_encode($allFile);
-                        $ad = ScbLeadEntry::where('id', $r->lead_id)->update(['other_doc' => $allFile]);
+                        $ad = IIBLeadEntry::where('id', $r->lead_id)->update(['other_doc' => $allFile]);
     
                     }
     
@@ -393,7 +394,7 @@ class ScbController extends Controller
     }
 
     
-    public function showScbData(Request $r)
+    public function showIIBData(Request $r)
     {
         // return response()->json($r->s_date);
         $date=date_create($r->s_date);
@@ -401,32 +402,31 @@ class ScbController extends Controller
         $date=date_create($r->e_date);
         $e_date= date_format($date,"Y-m-d 23:59:59");
         $user = User::where('user_id', $r->id)->first();
-        // return response()->json(['message' => 'check']);
         if ($user->role == 1) {
 
-            $alltc = ScbLeadEntry::select(DB::raw('scb_lead_entries.id as ID, scb_lead_entries.created_at as Date, scb_lead_entries.fname as FIRST_NAME,scb_lead_entries.lname as LAST_NAME, scb_lead_entries.pan as PAN,
-        scb_lead_entries.tc_id as TC, scb_lead_entries.tl_id as TL, scb_lead_entries.bm_id as BM, scb_lead_entries.application_no as AIP_NO,
-        scb_lead_entries.tl_status as TL_STATUS, statuses.status as STATUS, scb_lead_entries.comment as REMARK'))
-                ->join('statuses', 'statuses.id', '=', 'scb_lead_entries.status')->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])
-                ->where('bm_id', $r->id)->orderBy('scb_lead_entries.id', 'DESC')->get();
+            $alltc = IIBLeadEntry::select(DB::raw('i_i_b_lead_entries.id as ID, i_i_b_lead_entries.created_at as Date, i_i_b_lead_entries.fname as FIRST_NAME,i_i_b_lead_entries.lname as LAST_NAME, i_i_b_lead_entries.pan as PAN,
+        i_i_b_lead_entries.tc_id as TC, i_i_b_lead_entries.tl_id as TL, i_i_b_lead_entries.bm_id as BM, i_i_b_lead_entries.application_no as APPLICATION_NO,
+        i_i_b_lead_entries.tl_status as TL_STATUS, statuses.status as STATUS, i_i_b_lead_entries.comment as REMARK'))
+                ->join('statuses', 'statuses.id', '=', 'i_i_b_lead_entries.status')->whereBetween('i_i_b_lead_entries.created_at', [$s_date,$e_date])
+                ->where('bm_id', $r->id)->orderBy('i_i_b_lead_entries.id', 'DESC')->get();
         } elseif ($user->role == 2) {
-            $alltc = ScbLeadEntry::select(DB::raw('scb_lead_entries.id as ID, scb_lead_entries.created_at as Date, scb_lead_entries.fname as FIRST_NAME,scb_lead_entries.lname as LAST_NAME, scb_lead_entries.pan as PAN,
-        scb_lead_entries.tc_id as TC, scb_lead_entries.tl_id as TL, scb_lead_entries.bm_id as BM, scb_lead_entries.application_no as AIP_NO, 
-        scb_lead_entries.tl_status as TL_STATUS, statuses.status as STATUS, scb_lead_entries.comment as REMARK'))
-                ->join('statuses', 'statuses.id', '=', 'scb_lead_entries.status')->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])
-                ->where('tl_id', $r->id)->orderBy('scb_lead_entries.id', 'DESC')->get();
+            $alltc = IIBLeadEntry::select(DB::raw('i_i_b_lead_entries.id as ID, i_i_b_lead_entries.created_at as Date, i_i_b_lead_entries.fname as FIRST_NAME,i_i_b_lead_entries.lname as LAST_NAME, i_i_b_lead_entries.pan as PAN,
+        i_i_b_lead_entries.tc_id as TC, i_i_b_lead_entries.tl_id as TL, i_i_b_lead_entries.bm_id as BM, i_i_b_lead_entries.application_no as APPLICATION_NO, 
+        i_i_b_lead_entries.tl_status as TL_STATUS, statuses.status as STATUS, i_i_b_lead_entries.comment as REMARK'))
+                ->join('statuses', 'statuses.id', '=', 'i_i_b_lead_entries.status')->whereBetween('i_i_b_lead_entries.created_at', [$s_date,$e_date])
+                ->where('tl_id', $r->id)->orderBy('i_i_b_lead_entries.id', 'DESC')->get();
         } elseif ($user->role == 3) {
-            $alltc = ScbLeadEntry::select(DB::raw('scb_lead_entries.id as ID, scb_lead_entries.created_at as Date, scb_lead_entries.fname as FIRST_NAME,scb_lead_entries.lname as LAST_NAME, scb_lead_entries.pan as PAN,
-        scb_lead_entries.tc_id as TC, scb_lead_entries.tl_id as TL, scb_lead_entries.bm_id as BM, scb_lead_entries.application_no as AIP_NO,
-        scb_lead_entries.tl_status as TL_STATUS, statuses.status as STATUS, scb_lead_entries.comment as REMARK'))
-                ->join('statuses', 'statuses.id', '=', 'scb_lead_entries.status')->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])
-                ->where('tc_id', $r->id)->orderBy('scb_lead_entries.id', 'DESC')->get();
+            $alltc = IIBLeadEntry::select(DB::raw('i_i_b_lead_entries.id as ID, i_i_b_lead_entries.created_at as Date, i_i_b_lead_entries.fname as FIRST_NAME,i_i_b_lead_entries.lname as LAST_NAME, i_i_b_lead_entries.pan as PAN,
+        i_i_b_lead_entries.tc_id as TC, i_i_b_lead_entries.tl_id as TL, i_i_b_lead_entries.bm_id as BM, i_i_b_lead_entries.application_no as APPLICATION_NO,
+        i_i_b_lead_entries.tl_status as TL_STATUS, statuses.status as STATUS, i_i_b_lead_entries.comment as REMARK'))
+                ->join('statuses', 'statuses.id', '=', 'i_i_b_lead_entries.status')->whereBetween('i_i_b_lead_entries.created_at', [$s_date,$e_date])
+                ->where('tc_id', $r->id)->orderBy('i_i_b_lead_entries.id', 'DESC')->get();
         } elseif ($user->role == 4) {
-            $alltc = ScbLeadEntry::select(DB::raw('scb_lead_entries.id as ID, scb_lead_entries.created_at as Date, scb_lead_entries.fname as FIRST_NAME,scb_lead_entries.lname as LAST_NAME, scb_lead_entries.pan as PAN,
-        scb_lead_entries.tc_id as TC, scb_lead_entries.tl_id as TL, scb_lead_entries.bm_id as BM, scb_lead_entries.application_no as AIP_NO, 
-        scb_lead_entries.tl_status as TL_STATUS, statuses.status as STATUS, scb_lead_entries.comment as REMARK'))
-                ->join('statuses', 'statuses.id', '=', 'scb_lead_entries.status')->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])
-                ->where('scb_lead_entries.status','!=', 7)->orderBy('scb_lead_entries.id', 'DESC')->get();
+            $alltc = IIBLeadEntry::select(DB::raw('i_i_b_lead_entries.id as ID, i_i_b_lead_entries.created_at as Date, i_i_b_lead_entries.fname as FIRST_NAME,i_i_b_lead_entries.lname as LAST_NAME, i_i_b_lead_entries.pan as PAN,
+        i_i_b_lead_entries.tc_id as TC, i_i_b_lead_entries.tl_id as TL, i_i_b_lead_entries.bm_id as BM, i_i_b_lead_entries.application_no as APPLICATION_NO, 
+        i_i_b_lead_entries.tl_status as TL_STATUS, statuses.status as STATUS, i_i_b_lead_entries.comment as REMARK'))
+                ->join('statuses', 'statuses.id', '=', 'i_i_b_lead_entries.status')->whereBetween('i_i_b_lead_entries.created_at', [$s_date,$e_date])
+                ->where('i_i_b_lead_entries.status','!=', 11)->orderBy('i_i_b_lead_entries.id', 'DESC')->get();
         }
 
         $i = 0;
@@ -452,7 +452,7 @@ class ScbController extends Controller
         return response()->json(['message' => 'Not found!'], 404);
     }
 
-    public function showScbSummaryTc(Request $r)
+    public function showIIBSummaryTc(Request $r)
     {
         $date=date_create($r->s_date);
         $s_date= date_format($date,"Y-m-d 00:00:00");
@@ -474,37 +474,21 @@ class ScbController extends Controller
         }
         $i=0;
         foreach($alltc as $row){
-            $lead=ScbLeadEntry::where('tc_id',$row->TC)->where('status',19)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $cpv=ScbLeadEntry::where('tc_id',$row->TC)->where('status',20)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $cpvr=ScbLeadEntry::where('tc_id',$row->TC)->where('status',21)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $nc=ScbLeadEntry::where('tc_id',$row->TC)->where('status',4)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $aip=ScbLeadEntry::where('tc_id',$row->TC)->where('status',22)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $aipd=ScbLeadEntry::where('tc_id',$row->TC)->where('status',24)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $aipa=ScbLeadEntry::where('tc_id',$row->TC)->where('status',23)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $aap=ScbLeadEntry::where('tc_id',$row->TC)->where('status',31)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $aad=ScbLeadEntry::where('tc_id',$row->TC)->where('status',27)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $esignp=ScbLeadEntry::where('tc_id',$row->TC)->where('status',30)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $esignd=ScbLeadEntry::where('tc_id',$row->TC)->where('status',26)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $vkycp=ScbLeadEntry::where('tc_id',$row->TC)->where('status',14)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $vkycd=ScbLeadEntry::where('tc_id',$row->TC)->where('status',15)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $cb=ScbLeadEntry::where('tc_id',$row->TC)->where('status',8)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $cr=ScbLeadEntry::where('tc_id',$row->TC)->where('status',12)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            
-            $alltc[$i]->lead= count($lead)+count($cpv)+count($cpvr)+count($nc)+count($aip)+count($aipd)+count($aipa)+count($aap)+count($aad)+count($esignp)+count($esignd)+count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->CPV= count($cpv)+count($cpvr)+count($nc)+count($aip)+count($aipd)+count($aipa)+count($aap)+count($aad)+count($esignp)+count($esignd)+count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->CPV_reject= count($cpvr)+count($nc)+count($aip)+count($aipd)+count($aipa)+count($aap)+count($aad)+count($esignp)+count($esignd)+count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->Need_correction= count($nc)+count($aip)+count($aipd)+count($aipa)+count($aap)+count($aad)+count($esignp)+count($esignd)+count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->api= count($aip)+count($aipd)+count($aipa)+count($aap)+count($aad)+count($esignp)+count($esignd)+count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->api_decline= count($aipd)+count($aipa)+count($aap)+count($aad)+count($esignp)+count($esignd)+count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->api_approve= count($aipa)+count($aap)+count($aad)+count($esignp)+count($esignd)+count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->aadhar_auth_pending=count($aap)+count($aad)+count($esignp)+count($esignd)+count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->aadhar_auth_done =count($aad)+count($esignp)+count($esignd)+count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->e_sign_pending= count($esignp)+count($esignd)+count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->e_sign_done= count($esignd)+count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->v_KYC_pending= count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->v_KYC_done= count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->Card_booked= count($cb)+count($cr);
-            $alltc[$i]->Card_reject= count($cr);
+            $vp=IIBLeadEntry::where('tc_id',$row->TC)->where('status',11)->whereBetween('i_i_b_lead_entries.created_at', [$s_date,$e_date])->get();
+            $cpv=IIBLeadEntry::where('tc_id',$row->TC)->where('status',20)->whereBetween('i_i_b_lead_entries.created_at', [$s_date,$e_date])->get();
+            $nc=IIBLeadEntry::where('tc_id',$row->TC)->where('status',4)->whereBetween('i_i_b_lead_entries.created_at', [$s_date,$e_date])->get();
+            $cb=IIBLeadEntry::where('tc_id',$row->TC)->where('status',8)->whereBetween('i_i_b_lead_entries.created_at', [$s_date,$e_date])->get();
+            $ekycd=IIBLeadEntry::where('tc_id',$row->TC)->where('status',10)->whereBetween('i_i_b_lead_entries.created_at', [$s_date,$e_date])->get();
+            $log=IIBLeadEntry::where('tc_id',$row->TC)->where('status',32)->whereBetween('i_i_b_lead_entries.created_at', [$s_date,$e_date])->get();
+            $dic=IIBLeadEntry::where('tc_id',$row->TC)->where('status',5)->whereBetween('i_i_b_lead_entries.created_at', [$s_date,$e_date])->get();
+            // $acnr=IIBLeadEntry::where('tc_id',$row->TC)->where('status',9)->get();
+            $alltc[$i]->Verification_pending= count($vp)+ count($cpv)+count($nc)+count($cb)+count($ekycd)+count($log)+count($dic);
+            $alltc[$i]->CPV= count($cpv)+count($nc)+count($cb)+count($ekycd)+count($log)+count($dic);
+            $alltc[$i]->Need_correction= count($nc)+count($cb)+count($ekycd)+count($log)+count($dic);
+            $alltc[$i]->Card_booked= count($cb)+count($ekycd)+count($log)+count($dic);
+            $alltc[$i]->e_KYC_Done= count($ekycd)+count($log)+count($dic);
+            $alltc[$i]->Login= count($log)+count($dic);
+            $alltc[$i]->Decline= count($dic); 
             $tc=User::where('user_id',$row->TC)->first();
             $tl=User::where('user_id',$row->TL)->first();
             $tm=User::where('user_id',$row->BM)->first();
@@ -526,7 +510,7 @@ class ScbController extends Controller
 
         return response()->json(['message' => 'Not found!'], 404);
     }
-    public function showScbSummaryTl(Request $r)
+    public function showIIBSummaryTl(Request $r)
     {
         $date=date_create($r->s_date);
         $s_date= date_format($date,"Y-m-d 00:00:00");
@@ -548,37 +532,21 @@ class ScbController extends Controller
         }
         $i=0;
         foreach($alltc as $row){
-            $lead=ScbLeadEntry::where('tl_id',$row->TL)->where('tc_id',null)->where('status',19)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $cpv=ScbLeadEntry::where('tl_id',$row->TL)->where('tc_id',null)->where('status',20)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $cpvr=ScbLeadEntry::where('tl_id',$row->TL)->where('tc_id',null)->where('status',21)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $nc=ScbLeadEntry::where('tl_id',$row->TL)->where('tc_id',null)->where('status',4)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $aip=ScbLeadEntry::where('tl_id',$row->TL)->where('tc_id',null)->where('status',22)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $aipd=ScbLeadEntry::where('tl_id',$row->TL)->where('tc_id',null)->where('status',24)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $aipa=ScbLeadEntry::where('tl_id',$row->TL)->where('tc_id',null)->where('status',23)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $aap=ScbLeadEntry::where('tl_id',$row->TL)->where('tc_id',null)->where('status',31)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $aad=ScbLeadEntry::where('tl_id',$row->TL)->where('tc_id',null)->where('status',27)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $esignp=ScbLeadEntry::where('tl_id',$row->TL)->where('tc_id',null)->where('status',30)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $esignd=ScbLeadEntry::where('tl_id',$row->TL)->where('tc_id',null)->where('status',26)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $vkycp=ScbLeadEntry::where('tl_id',$row->TL)->where('tc_id',null)->where('status',14)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $vkycd=ScbLeadEntry::where('tl_id',$row->TL)->where('tc_id',null)->where('status',15)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $cb=ScbLeadEntry::where('tl_id',$row->TL)->where('tc_id',null)->where('status',8)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $cr=ScbLeadEntry::where('tl_id',$row->TL)->where('tc_id',null)->where('status',12)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            
-            $alltc[$i]->lead= count($lead)+count($cpv)+count($cpvr)+count($nc)+count($aip)+count($aipd)+count($aipa)+count($aap)+count($aad)+count($esignp)+count($esignd)+count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->CPV= count($cpv)+count($cpvr)+count($nc)+count($aip)+count($aipd)+count($aipa)+count($aap)+count($aad)+count($esignp)+count($esignd)+count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->CPV_reject= count($cpvr)+count($nc)+count($aip)+count($aipd)+count($aipa)+count($aap)+count($aad)+count($esignp)+count($esignd)+count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->Need_correction= count($nc)+count($aip)+count($aipd)+count($aipa)+count($aap)+count($aad)+count($esignp)+count($esignd)+count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->api= count($aip)+count($aipd)+count($aipa)+count($aap)+count($aad)+count($esignp)+count($esignd)+count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->api_decline= count($aipd)+count($aipa)+count($aap)+count($aad)+count($esignp)+count($esignd)+count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->api_approve= count($aipa)+count($aap)+count($aad)+count($esignp)+count($esignd)+count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->aadhar_auth_pending=count($aap)+count($aad)+count($esignp)+count($esignd)+count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->aadhar_auth_done =count($aad)+count($esignp)+count($esignd)+count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->e_sign_pending= count($esignp)+count($esignd)+count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->e_sign_done= count($esignd)+count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->v_KYC_pending= count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->v_KYC_done= count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->Card_booked= count($cb)+count($cr);
-            $alltc[$i]->Card_reject= count($cr);
+            $vp=IIBLeadEntry::where('tl_id',$row->TL)->where('tc_id',null)->where('status',11)->whereBetween('i_i_b_lead_entries.created_at', [$s_date,$e_date])->get();
+            $cpv=IIBLeadEntry::where('tl_id',$row->TL)->where('tc_id',null)->where('status',20)->whereBetween('i_i_b_lead_entries.created_at', [$s_date,$e_date])->get();
+            $nc=IIBLeadEntry::where('tl_id',$row->TL)->where('tc_id',null)->where('status',4)->whereBetween('i_i_b_lead_entries.created_at', [$s_date,$e_date])->get();
+            $cb=IIBLeadEntry::where('tl_id',$row->TL)->where('tc_id',null)->where('status',8)->whereBetween('i_i_b_lead_entries.created_at', [$s_date,$e_date])->get();
+            $ekycd=IIBLeadEntry::where('tl_id',$row->TL)->where('tc_id',null)->where('status',10)->whereBetween('i_i_b_lead_entries.created_at', [$s_date,$e_date])->get();
+            $log=IIBLeadEntry::where('tl_id',$row->TL)->where('tc_id',null)->where('status',32)->whereBetween('i_i_b_lead_entries.created_at', [$s_date,$e_date])->get();
+            $dic=IIBLeadEntry::where('tl_id',$row->TL)->where('tc_id',null)->where('status',5)->whereBetween('i_i_b_lead_entries.created_at', [$s_date,$e_date])->get();
+            // $acnr=IIBLeadEntry::where('bm_id',$row->TL)->where('tc_id',null)->where('status',9)->get();
+            $alltc[$i]->Verification_pending= count($vp)+ count($cpv)+count($nc)+count($cb)+count($ekycd)+count($log)+count($dic);
+            $alltc[$i]->CPV= count($cpv)+count($nc)+count($cb)+count($ekycd)+count($log)+count($dic);
+            $alltc[$i]->Need_correction= count($nc)+count($cb)+count($ekycd)+count($log)+count($dic);
+            $alltc[$i]->Card_booked= count($cb)+count($ekycd)+count($log)+count($dic);
+            $alltc[$i]->e_KYC_Done= count($ekycd)+count($log)+count($dic);
+            $alltc[$i]->Login= count($log)+count($dic);
+            $alltc[$i]->Decline= count($dic);
             $tc=User::where('user_id',$row->TC)->first();
             $tl=User::where('user_id',$row->TL)->first();
             $tm=User::where('user_id',$row->BM)->first();
@@ -600,7 +568,7 @@ class ScbController extends Controller
 
         return response()->json(['message' => 'Not found!'], 404);
     }
-    public function showScbSummaryBm(Request $r)
+    public function showIIBSummaryBm(Request $r)
     {
         $date=date_create($r->s_date);
         $s_date= date_format($date,"Y-m-d 00:00:00");
@@ -622,37 +590,21 @@ class ScbController extends Controller
         }
         $i=0;
         foreach($alltc as $row){
-            $lead=ScbLeadEntry::where('bm_id',$row->BM)->where('tl_id',null)->where('tc_id',null)->where('status',19)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $cpv=ScbLeadEntry::where('bm_id',$row->BM)->where('tl_id',null)->where('tc_id',null)->where('status',20)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $cpvr=ScbLeadEntry::where('bm_id',$row->BM)->where('tl_id',null)->where('tc_id',null)->where('status',21)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $nc=ScbLeadEntry::where('bm_id',$row->BM)->where('tl_id',null)->where('tc_id',null)->where('status',4)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $aip=ScbLeadEntry::where('bm_id',$row->BM)->where('tl_id',null)->where('tc_id',null)->where('status',22)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $aipd=ScbLeadEntry::where('bm_id',$row->BM)->where('tl_id',null)->where('tc_id',null)->where('status',24)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $aipa=ScbLeadEntry::where('bm_id',$row->BM)->where('tl_id',null)->where('tc_id',null)->where('status',23)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $aap=ScbLeadEntry::where('bm_id',$row->BM)->where('tl_id',null)->where('tc_id',null)->where('status',31)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $aad=ScbLeadEntry::where('bm_id',$row->BM)->where('tl_id',null)->where('tc_id',null)->where('status',27)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $esignp=ScbLeadEntry::where('bm_id',$row->BM)->where('tl_id',null)->where('tc_id',null)->where('status',30)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $esignd=ScbLeadEntry::where('bm_id',$row->BM)->where('tl_id',null)->where('tc_id',null)->where('status',26)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $vkycp=ScbLeadEntry::where('bm_id',$row->BM)->where('tl_id',null)->where('tc_id',null)->where('status',14)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $vkycd=ScbLeadEntry::where('bm_id',$row->BM)->where('tl_id',null)->where('tc_id',null)->where('status',15)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $cb=ScbLeadEntry::where('bm_id',$row->BM)->where('tl_id',null)->where('tc_id',null)->where('status',8)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            $cr=ScbLeadEntry::where('bm_id',$row->BM)->where('tl_id',null)->where('tc_id',null)->where('status',12)->whereBetween('scb_lead_entries.created_at', [$s_date,$e_date])->get();
-            
-            $alltc[$i]->lead= count($lead)+count($cpv)+count($cpvr)+count($nc)+count($aip)+count($aipd)+count($aipa)+count($aap)+count($aad)+count($esignp)+count($esignd)+count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->CPV= count($cpv)+count($cpvr)+count($nc)+count($aip)+count($aipd)+count($aipa)+count($aap)+count($aad)+count($esignp)+count($esignd)+count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->CPV_reject= count($cpvr)+count($nc)+count($aip)+count($aipd)+count($aipa)+count($aap)+count($aad)+count($esignp)+count($esignd)+count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->Need_correction= count($nc)+count($aip)+count($aipd)+count($aipa)+count($aap)+count($aad)+count($esignp)+count($esignd)+count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->api= count($aip)+count($aipd)+count($aipa)+count($aap)+count($aad)+count($esignp)+count($esignd)+count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->api_decline= count($aipd)+count($aipa)+count($aap)+count($aad)+count($esignp)+count($esignd)+count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->api_approve= count($aipa)+count($aap)+count($aad)+count($esignp)+count($esignd)+count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->aadhar_auth_pending=count($aap)+count($aad)+count($esignp)+count($esignd)+count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->aadhar_auth_done =count($aad)+count($esignp)+count($esignd)+count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->e_sign_pending= count($esignp)+count($esignd)+count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->e_sign_done= count($esignd)+count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->v_KYC_pending= count($vkycp)+count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->v_KYC_done= count($vkycd)+count($cb)+count($cr);
-            $alltc[$i]->Card_booked= count($cb)+count($cr);
-            $alltc[$i]->Card_reject= count($cr); 
+            $vp=IIBLeadEntry::where('bm_id',$row->BM)->where('tl_id',null)->where('tc_id',null)->where('status',11)->whereBetween('i_i_b_lead_entries.created_at', [$s_date,$e_date])->get();
+            $cpv=IIBLeadEntry::where('bm_id',$row->BM)->where('tl_id',null)->where('tc_id',null)->where('status',20)->whereBetween('i_i_b_lead_entries.created_at', [$s_date,$e_date])->get();
+            $nc=IIBLeadEntry::where('bm_id',$row->BM)->where('tl_id',null)->where('tc_id',null)->where('status',4)->whereBetween('i_i_b_lead_entries.created_at', [$s_date,$e_date])->get();
+            $cb=IIBLeadEntry::where('bm_id',$row->BM)->where('tl_id',null)->where('tc_id',null)->where('status',8)->whereBetween('i_i_b_lead_entries.created_at', [$s_date,$e_date])->get();
+            $ekycd=IIBLeadEntry::where('bm_id',$row->BM)->where('tl_id',null)->where('tc_id',null)->where('status',10)->whereBetween('i_i_b_lead_entries.created_at', [$s_date,$e_date])->get();
+            $log=IIBLeadEntry::where('bm_id',$row->BM)->where('tl_id',null)->where('tc_id',null)->where('status',32)->whereBetween('i_i_b_lead_entries.created_at', [$s_date,$e_date])->get();
+            $dic=IIBLeadEntry::where('bm_id',$row->BM)->where('tl_id',null)->where('tc_id',null)->where('status',5)->whereBetween('i_i_b_lead_entries.created_at', [$s_date,$e_date])->get();
+            // $acnr=IIBLeadEntry::where('bm_id',$row->BM)->where('tl_id',null)->where('tc_id',null)->where('status',9)->get();
+            $alltc[$i]->Verification_pending= count($vp)+ count($cpv)+count($nc)+count($cb)+count($ekycd)+count($log)+count($dic);
+            $alltc[$i]->CPV= count($cpv)+count($nc)+count($cb)+count($ekycd)+count($log)+count($dic);
+            $alltc[$i]->Need_correction= count($nc)+count($cb)+count($ekycd)+count($log)+count($dic);
+            $alltc[$i]->Card_booked= count($cb)+count($ekycd)+count($log)+count($dic);
+            $alltc[$i]->e_KYC_Done= count($ekycd)+count($log)+count($dic);
+            $alltc[$i]->Login= count($log)+count($dic);
+            $alltc[$i]->Decline= count($dic);
             $tc=User::where('user_id',$row->TC)->first();
             $tl=User::where('user_id',$row->TL)->first();
             $tm=User::where('user_id',$row->BM)->first();
@@ -674,15 +626,15 @@ class ScbController extends Controller
 
         return response()->json(['message' => 'Not found!'], 404);
     }
-    public function getLeadScb($lead_id)
+    public function getLeadIIB($lead_id)
     {
-        $alltc = ScbLeadEntry::where('id', $lead_id)->first();
+        $alltc = IIBLeadEntry::where('id', $lead_id)->first();
 
 
         return response()->json(['lead' => $alltc]);
     }
 
-    public static function save_file_scb(Request $request)
+    public static function save_file_IIB(Request $request)
     {
 
         try {
@@ -692,16 +644,16 @@ class ScbController extends Controller
             $destinationPath = public_path('/files');
             $file->move($destinationPath, $file_name);
             if ($request->type == 1) {
-                ScbLeadEntry::where('id', $request->id)->update(['bank_document' => $file_name,'bank_pass'=>$request->bank_pass]);
+                IIBLeadEntry::where('id', $request->id)->update(['bank_document' => $file_name,'bank_pass'=>$request->bank_pass]);
                 return response()->json(['msg' => "Bank Statement uploaded"]);
             } elseif ($request->type == 2) {
-                ScbLeadEntry::where('id', $request->id)->update(['salary_slip' => $file_name,'salary_pass'=>$request->salary_pass]);
+                IIBLeadEntry::where('id', $request->id)->update(['salary_slip' => $file_name,'salary_pass'=>$request->salary_pass]);
                 return response()->json(['msg' => "Salary Slip uploaded"]);
             } elseif ($request->type == 3) {
-                ScbLeadEntry::where('id', $request->id)->update(['pan_card' => $file_name,'pan_pass'=>$request->pan_pass]);
+                IIBLeadEntry::where('id', $request->id)->update(['pan_card' => $file_name,'pan_pass'=>$request->pan_pass]);
                 return response()->json(['msg' => "Pan Card uploaded"]);
             } elseif ($request->type == 4) {
-                ScbLeadEntry::where('id', $request->id)->update(['aadhar_card' => $file_name,'aadhar_pass'=>$request->aadhar_pas]);
+                IIBLeadEntry::where('id', $request->id)->update(['aadhar_card' => $file_name,'aadhar_pass'=>$request->aadhar_pas]);
                 return response()->json(['msg' => "Aadhaar Card uploaded"]);
             }
         } catch (Exception $e) {
@@ -709,9 +661,9 @@ class ScbController extends Controller
         }
     }
 
-    public static function delete_scb_lead(Request $request){
+    public static function delete_IIB_lead(Request $request){
         try{
-            ScbLeadEntry::where('id',$request->id)->delete();
+            IIBLeadEntry::where('id',$request->id)->delete();
             return response()->json(['msg'=>"Lead Deleted"]);
         }catch(Exception $e){
             return response()->json(['msg'=>$e->getMessage()]);

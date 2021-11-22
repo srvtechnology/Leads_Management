@@ -5,14 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ScbLeadEntry extends Model
+class LoanEntry extends Model
 {
     use HasFactory;
     protected $fillable=[
+            'bank',
         'salutation',
 'fname',
 'lname',
-        'card_type',
+'dsa',
+'emi',
+'emi_amount',
+'gst',
+'gst_number',
+        'loan_type',
         'mobile',
         'pan',
         'dob',

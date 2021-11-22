@@ -88,47 +88,101 @@ class SbiController extends Controller
         return response()->json(['msg' => "Status Updated!"]);
     }
 
-    public function lead_entry_sbi(Request $r)
+    public function lead_entry_sbi(Request $request)
     {
-        // return response()->json(['msg'=>$r->name]);
-        $validator = Validator::make($r->all(), [
-
-            'fname' => 'required',
-            // 'lname' => 'required',
-            'dob' => 'required',
-            'pan' => 'required',
-            'father_name' => 'required',
-            'mother_name' => 'required',
-            'resi_address' => 'required',
-            'resi_city' => 'required',
-            'resi_pin' => 'required|integer',
-            'curr_adrs_proof' => 'required',
-            // 'resi_phone' => 'required|integer',
-            'mobile' => 'required|integer',
-            'email' => 'required|email',
-            'occupation' => 'required',
-            'company' => 'required',
-            'designation' => 'required',
-            'sarrogate' => 'required',
-            // 'education' => 'required',
-            // 'marital_status' => 'required',
-            // 'sbi_ac' => 'required',
-            // 'office_address' => 'required',
-            // 'office_city' => 'required',
-            // 'office_pin' => 'required|number',
-            // 'office_phone' => 'required|number',
-            // 'aadhaar_linked_mobile' => 'required',
-            // 'appointment_date' => 'required',
-            // 'appointment_time' => 'required',
-            // 'card_applied' => 'required',
-            // 'appointment_adrs' => 'required',
-
-        ]);
-
-        if ($validator->fails()) {
-            //  Session::flash('msg', $validator->messages()->first());
-            return response()->json(['msg' => $validator->messages()->first(), 'flag' => 0]);
+        $r = json_decode($request->data);
+        $card_limit = '';
+        if (isset($request->card_limit) && $request->card_limit != 'undefined') {
+            $card_limit = $request->card_limit;
         }
+        if(empty($r->fname)){
+            return response()->json(['msg'=>'fname is required', 'flag'=>0]);
+        }
+        if(empty($r->dob)){
+            return response()->json(['msg'=>'dob is required', 'flag'=>0]);
+        }
+        if(empty($r->pan)){
+            return response()->json(['msg'=>'pan is required', 'flag'=>0]);
+        }
+        if(empty($r->father_name)){
+            return response()->json(['msg'=>'father_name is required', 'flag'=>0]);
+        }
+        if(empty($r->mother_name)){
+            return response()->json(['msg'=>'mother_name is required', 'flag'=>0]);
+        }
+        if(empty($r->resi_address)){
+            return response()->json(['msg'=>'resi_address is required', 'flag'=>0]);
+        }
+        if(empty($r->resi_city)){
+            return response()->json(['msg'=>'resi_city is required', 'flag'=>0]);
+        }
+        if(empty($r->resi_pin)){
+            return response()->json(['msg'=>'resi_pin is required', 'flag'=>0]);
+        }
+        if(empty($r->curr_adrs_proof)){
+            return response()->json(['msg'=>'curr_adrs_proof is required', 'flag'=>0]);
+        }
+        if(empty($r->mobile)){
+            return response()->json(['msg'=>'mobile is required', 'flag'=>0]);
+        }
+        if($r->resi_phone){
+            $res= (!preg_match("/^[6-9][0-9]{9}$/", $r->resi_phone)) ? FALSE : TRUE;
+            if($res == false){
+                return response()->json(['msg'=>"Please Enter Valid resi phone", 'flag'=>0]);
+            }
+        }
+        if($r->mobile){
+            $res= (!preg_match("/^[6-9][0-9]{9}$/", $r->mobile)) ? FALSE : TRUE;
+            if($res == false){
+                return response()->json(['msg'=>"Please Enter Valid mobile", 'flag'=>0]);
+            }
+        }
+        if(empty($r->email)){
+            return response()->json(['msg'=>'email is required', 'flag'=>0]);
+        }
+        if($r->email){
+            $res= (!preg_match("/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/ix", $r->email)) ? FALSE : TRUE;
+            if($res == false){
+                return response()->json(['msg'=>"Please Enter Valid email", 'flag'=>0]);
+            }
+        }
+        if(empty($r->occupation)){
+            return response()->json(['msg'=>'occupation is required', 'flag'=>0]);
+        }
+        if(empty($r->company)){
+            return response()->json(['msg'=>'company is required', 'flag'=>0]);
+        }
+        if(empty($r->designation)){
+            return response()->json(['msg'=>'designation is required', 'flag'=>0]);
+        }
+        if(empty($r->sarrogate)){
+            return response()->json(['msg'=>'sarrogate is required', 'flag'=>0]);
+        }
+        // $validator = Validator::make($r->all(), [
+
+        //     'fname' => 'required',
+        //     'dob' => 'required',
+        //     'pan' => 'required',
+        //     'father_name' => 'required',
+        //     'mother_name' => 'required',
+        //     'resi_address' => 'required',
+        //     'resi_city' => 'required',
+        //     'resi_pin' => 'required|integer',
+        //     'curr_adrs_proof' => 'required',
+        //     'mobile' => 'required|integer',
+        //     'email' => 'required|email',
+        //     'occupation' => 'required',
+        //     'company' => 'required',
+        //     'designation' => 'required',
+        //     'sarrogate' => 'required',
+        
+
+        // ]);
+
+        // if ($validator->fails()) {
+        //     //  Session::flash('msg', $validator->messages()->first());
+        //     return response()->json(['msg' => $validator->messages()->first(), 'flag' => 0]);
+        // }
         
         try {
             SbiLeadEntry::where('id', $r->lead_id)->where('pan', $r->pan)->update([
@@ -167,9 +221,67 @@ class SbiController extends Controller
                 'application_no' => $r->application_no,
                 'lead_ref'=>$r->lead_ref,
                 'bank_remark'=>$r->bank_remark,
-                'card_limit'=>$r->card_limit,
+                'card_limit'=>$card_limit,
                 'tl_status' => $r->tlstatus,
             ]);
+            if ($request->bank_doc != "null") {
+                $file = $request->bank_doc;
+                $file_name = time() . 'ba.' . $file->getClientOriginalExtension();
+                $destinationPath = public_path('/files');
+                $file->move($destinationPath, $file_name);
+                SbiLeadEntry::where('id', $r->lead_id)->update(['bank_document' => $file_name,'bank_pass'=>$request->bank_pass]);
+
+            }
+            if ($request->salary_slip != null) {
+                $allFile=array();
+                $i=0;
+                foreach($request->salary_slip as $row){
+                    $file = $row;
+                    $file_name = time().$i. 'sa.' . $file->getClientOriginalExtension();
+                    $destinationPath = public_path('/files');
+                    $file->move($destinationPath, $file_name);
+                    array_push($allFile,$file_name);
+                    $i++;
+                }
+                $allFile = json_encode($allFile);
+                $ad = SbiLeadEntry::where('id', $r->lead_id)->update(['salary_slip' => $allFile]);
+
+            }
+            if ($request->pan_card != "null") {
+                
+                $file = $request->pan_card;
+                $file_name = time() . 'pa.' . $file->getClientOriginalExtension();
+                $destinationPath = public_path('/files');
+                $file->move($destinationPath, $file_name);
+                SbiLeadEntry::where('id', $r->lead_id)->update(['pan_card' => $file_name]);
+                
+            }
+            if ($request->aadhar_card != "null") {
+                $file = $request->aadhar_card;
+                $file_name = time() . 'ad.' . $file->getClientOriginalExtension();
+                $destinationPath = public_path('/files');
+                $file->move($destinationPath, $file_name);
+                SbiLeadEntry::where('id', $r->lead_id)->update(['aadhar_card' => $file_name]);
+                
+            }
+            // return response()->json($request->other_doc);
+            if ($request->other_doc != null) {
+
+                $allFile=array();
+                $i=0;
+                foreach($request->other_doc as $row){
+                    $file = $row;
+                    $file_name = time().$i. 'ot.' . $file->getClientOriginalExtension();
+                    $destinationPath = public_path('/files');
+                    $file->move($destinationPath, $file_name);
+                    array_push($allFile,$file_name);
+                    $i++;
+                }
+                $allFile = json_encode($allFile);
+                $ad = SbiLeadEntry::where('id', $r->lead_id)->update(['other_doc' => $allFile]);
+
+            }
+
             $urs = User::where('id',$r->id)->first();
 
             if ($urs->role == 2 && $r->tlstatus == 'Approve') {
@@ -506,6 +618,9 @@ class SbiController extends Controller
             } elseif ($request->type == 4) {
                 SbiLeadEntry::where('id', $request->id)->update(['aadhar_card' => $file_name,'aadhar_pass'=>$request->aadhar_pass]);
                 return response()->json(['msg' => "Aadhaar Card uploaded"]);
+            }elseif ($request->type == 5) {
+                SbiLeadEntry::where('id', $request->id)->update(['other_doc' => $file_name,'other_doc_pass'=>$request->other_doc_pass]);
+                return response()->json(['msg' => "Other Doc uploaded"]);
             }
         } catch (Exception $e) {
             return response()->json(['msg' => $e->getMessage()]);

@@ -43,6 +43,10 @@ class AuthController extends Controller
                 $id = 'TC' . str_pad($user->id, 3, '0', STR_PAD_LEFT);
             } elseif ($user->role == 4) {
                 $id = 'BP' . str_pad($user->id, 3, '0', STR_PAD_LEFT);
+            }elseif ($user->role == 5) {
+                $id = 'BPL' . str_pad($user->id, 3, '0', STR_PAD_LEFT);
+            }elseif ($user->role == 6) {
+                $id = 'FOS' . str_pad($user->id, 3, '0', STR_PAD_LEFT);
             }
             $qty = User::where('id', $user->id)->update(['user_id' => $id]);
             if ($user->role == 2) {

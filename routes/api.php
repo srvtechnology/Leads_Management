@@ -1,9 +1,14 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AxisController;
 use App\Http\Controllers\BpController;
 use App\Http\Controllers\CitiController;
 use App\Http\Controllers\HdfcController;
+use App\Http\Controllers\HsbcController;
+use App\Http\Controllers\IIBController;
+use App\Http\Controllers\LeaveController;
+use App\Http\Controllers\LoanController;
 use App\Http\Controllers\SbiController;
 use App\Http\Controllers\ScbController;
 use App\Http\Controllers\TcController;
@@ -49,6 +54,8 @@ Route::get('get-tc-list/{id}', [TcController::class, 'showTc']);
 Route::get('get-tl-list-add', [TcController::class, 'showTlToAdd']);
 Route::post('add-leader', [TcController::class, 'add_leader']);
 Route::get('get-bp-list/{id}', [BpController::class, 'showBp']);
+Route::get('get-bpl-list/{id}', [BpController::class, 'showBpl']);
+
 // lead entry
 // scb
 Route::post('lead-entry-scb', [ScbController::class, 'lead_entry_scb']);
@@ -103,4 +110,45 @@ Route::get('get-hdfc-duplicate/{id}/{s_date}/{e_date}', [HdfcController::class, 
 Route::post('save-file-hdfc', [HdfcController::class, 'save_file_hdfc']);
 Route::post('delete-hdfc-lead', [HdfcController::class, 'delete_hdfc_lead']);
 
+// iib
+Route::post('lead-entry-iib', [IIBController::class, 'lead_entry_IIB']);
+Route::get('get-iib-summary/{id}', [IIBController::class, 'showIIBSummary']);
+Route::get('get-iib-data/{id}', [IIBController::class, 'showIIBData']);
+Route::get('get-lead-iib/{lead_id}', [IIBController::class, 'getLeadIIB']);
+Route::get('get-iib-summary-tc/{id}/{s_date}/{e_date}', [IIBController::class, 'showIIBSummaryTc']);
+Route::get('get-iib-summary-tl/{id}/{s_date}/{e_date}', [IIBController::class, 'showIIBSummaryTl']);
+Route::get('get-iib-summary-bm/{id}/{s_date}/{e_date}', [IIBController::class, 'showIIBSummaryBm']);
+Route::get('get-iib-data/{id}/{s_date}/{e_date}', [IIBController::class, 'showIIBData']);
+Route::get('get-iib-duplicate/{id}/{s_date}/{e_date}', [IIBController::class, 'showIIBDuplicate']);
+Route::post('save-file-iib', [IIBController::class, 'save_file_IIB']);
+Route::post('delete-iib-lead', [IIBController::class, 'delete_IIB_lead']);
 
+// hsbc
+Route::post('lead-entry-hsbc', [HsbcController::class, 'lead_entry_hsbc']);
+Route::get('get-hsbc-summary/{id}', [HsbcController::class, 'showHsbcSummary']);
+Route::get('get-hsbc-data/{id}', [HsbcController::class, 'showHsbcData']);
+Route::get('get-lead-hsbc/{lead_id}', [HsbcController::class, 'getLeadHsbc']);
+Route::get('get-hsbc-summary-tc/{id}/{s_date}/{e_date}', [HsbcController::class, 'showHsbcSummaryTc']);
+Route::get('get-hsbc-summary-tl/{id}/{s_date}/{e_date}', [HsbcController::class, 'showHsbcSummaryTl']);
+Route::get('get-hsbc-summary-bm/{id}/{s_date}/{e_date}', [HsbcController::class, 'showHsbcSummaryBm']);
+Route::get('get-hsbc-data/{id}/{s_date}/{e_date}', [HsbcController::class, 'showHsbcData']);
+Route::get('get-hsbc-duplicate/{id}/{s_date}/{e_date}', [HsbcController::class, 'showHsbcDuplicate']);
+Route::post('save-file-hsbc', [HsbcController::class, 'save_file_hsbc']);
+Route::post('delete-hsbc-lead', [HsbcController::class, 'delete_hsbc_lead']);
+
+// leave
+Route::post('apply-leave',[LeaveController::class, 'applyForLeave']);
+Route::post('bm-update-leave',[LeaveController::class, 'bmUpdateLeave']);
+Route::get('get-all-leave/{user_id}/{role}',[LeaveController::class, 'getAllLeave']);
+Route::get('leave-info/{leave_id}',[LeaveController::class, 'getLeaveInfo']);
+Route::post('delete-leave', [LeaveController::class, 'deleteLeave'])->name('deleteLeave');
+
+// loan
+Route::post('lead-entry-loan',[LoanController::class, 'lead_entry_loan']);
+Route::get('get-loan-data/{bank}/{id}/{s_date}/{e_date}', [LoanController::class, 'showLoanData']);
+Route::get('get-lead-loan/{loan_id}',[LoanController::class, 'getLeadLoan']);
+Route::get('get-loan-summary-tc/{id}/{s_date}/{e_date}', [LoanController::class, 'showLoanSummaryTc']);
+Route::get('get-loan-summary-tl/{id}/{s_date}/{e_date}', [LoanController::class, 'showLoanSummaryTl']);
+Route::get('get-loan-summary-bm/{id}/{s_date}/{e_date}', [LoanController::class, 'showLoanSummaryBm']);
+Route::post('delete-loan-lead', [LoanController::class, 'delete_loan_lead']);
+Route::post('save-file-loan', [LoanController::class, 'save_file_loan']);

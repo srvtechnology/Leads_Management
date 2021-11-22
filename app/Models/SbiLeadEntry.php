@@ -60,6 +60,8 @@ class SbiLeadEntry extends Model
 'bank_pass',
 'salary_pass',
 'pan_pass',
-'aadhar_pass'
+'aadhar_pass',
+'other_doc',
+'other_doc_pass'
     ];
 }
