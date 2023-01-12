@@ -45,6 +45,4 @@ class CheckClientCredentialsForAnyScope extends CheckCredentials
 
         throw new MissingScopeException($scopes);
     }
-
-    
 }

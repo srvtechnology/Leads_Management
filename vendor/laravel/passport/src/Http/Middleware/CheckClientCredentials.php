@@ -43,5 +43,4 @@ class CheckClientCredentials extends CheckCredentials
             }
         }
     }
-    
 }

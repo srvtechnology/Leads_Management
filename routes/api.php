@@ -6,6 +6,7 @@ use App\Http\Controllers\BpController;
 use App\Http\Controllers\CitiController;
 use App\Http\Controllers\HdfcController;
 use App\Http\Controllers\HsbcController;
+use App\Http\Controllers\IdfcController;
 use App\Http\Controllers\IIBController;
 use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\LoanController;
@@ -16,7 +17,7 @@ use App\Http\Controllers\TlController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\FosController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -55,6 +56,8 @@ Route::get('get-tl-list-add', [TcController::class, 'showTlToAdd']);
 Route::post('add-leader', [TcController::class, 'add_leader']);
 Route::get('get-bp-list/{id}', [BpController::class, 'showBp']);
 Route::get('get-bpl-list/{id}', [BpController::class, 'showBpl']);
+Route::get('get-fos-list/{id}', [FosController::class, 'showFos']);
+
 
 // lead entry
 // scb
@@ -135,6 +138,19 @@ Route::get('get-hsbc-data/{id}/{s_date}/{e_date}', [HsbcController::class, 'show
 Route::get('get-hsbc-duplicate/{id}/{s_date}/{e_date}', [HsbcController::class, 'showHsbcDuplicate']);
 Route::post('save-file-hsbc', [HsbcController::class, 'save_file_hsbc']);
 Route::post('delete-hsbc-lead', [HsbcController::class, 'delete_hsbc_lead']);
+
+// idfc
+Route::post('lead-entry-idfc', [IdfcController::class, 'lead_entry_idfc']);
+Route::get('get-idfc-summary/{id}', [IdfcController::class, 'showIdfcSummary']);
+Route::get('get-idfc-data/{id}', [IdfcController::class, 'showIdfcData']);
+Route::get('get-lead-idfc/{lead_id}', [IdfcController::class, 'getLeadIdfc']);
+Route::get('get-idfc-summary-tc/{id}/{s_date}/{e_date}', [IdfcController::class, 'showIdfcSummaryTc']);
+Route::get('get-idfc-summary-tl/{id}/{s_date}/{e_date}', [IdfcController::class, 'showIdfcSummaryTl']);
+Route::get('get-idfc-summary-bm/{id}/{s_date}/{e_date}', [IdfcController::class, 'showIdfcSummaryBm']);
+Route::get('get-idfc-data/{id}/{s_date}/{e_date}', [IdfcController::class, 'showIdfcData']);
+Route::get('get-idfc-duplicate/{id}/{s_date}/{e_date}', [IdfcController::class, 'showIdfcDuplicate']);
+Route::post('save-file-idfc', [IdfcController::class, 'save_file_idfc']);
+Route::post('delete-idfc-lead', [IdfcController::class, 'delete_idfc_lead']);
 
 // leave
 Route::post('apply-leave',[LeaveController::class, 'applyForLeave']);
